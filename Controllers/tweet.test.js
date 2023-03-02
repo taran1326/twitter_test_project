@@ -65,7 +65,7 @@ describe('Create Tweet' , ()=> {
         expect(res.body.data).toHaveProperty('email');
         
     });
-    
+
     it('should be able to login user 1' , async()=>{
         res1 = await request(app).post('/auth/login')
                                  .set('Content-type', 'application/json')
@@ -165,10 +165,3 @@ describe('Create Tweet' , ()=> {
 
 })
 
-// describe('Get feed and mytweets' , ()=>{
-//     it('should show all the feed' , async()=> {
-//         const response = request(app).get('/tweet/feed')
-//                                      .set()
-                                     
-//     })
-// })
