@@ -8,7 +8,7 @@ const { isAuth } = require('../Utils/Auth');
 
 
 describe('Create Tweet' , ()=> {
-    let res , res1 , res2, res3 , res4 ,res5 ,response2;    
+    let res , res1 , res2, res3 , res4 ,res5 ,response;    
 
     it('should be able to catch wrong password format (NOT ALPHANUMERIC) and give 401 code' , async()=>{
         const data = {
@@ -54,17 +54,18 @@ describe('Create Tweet' , ()=> {
 
 
         JSON.stringify(data);
-        const res = await request(app).post('/auth/register')
+        res = await request(app).post('/auth/register')
                                 .set('Content-type', 'application/json')
                                 .send(data)
 
-        
+
         expect(res.statusCode).toBe(200);
         expect(res.body.data).toHaveProperty('username');
         expect(res.body.data).toHaveProperty('name');
         expect(res.body.data).toHaveProperty('email');
         
     });
+    
     it('should be able to login user 1' , async()=>{
         res1 = await request(app).post('/auth/login')
                                  .set('Content-type', 'application/json')
@@ -99,7 +100,7 @@ describe('Create Tweet' , ()=> {
     });
 
 
-    it('should be able to register , sign in and create a tweet (USER 2)' , async() =>{
+    it('should be able to register , sign in and (USER 2)' , async() =>{
         const data2 = {
             "name": "Taran",
             "username": "taran1326",
@@ -137,18 +138,22 @@ describe('Create Tweet' , ()=> {
     })
 
     it('should get all tweets and should be stored in chronological order' , async()=>{
+
+
+
+        //redundant code
+
         res5 = await request(app).get('/tweet/feed')
                     .set('Cookie' , res3.headers['set-cookie'])
                     .set('Content-type' , 'application/json')
                     .expect(200)
 
-        let ans = (res5.body.data[0].creationDatetime) > (res5.body.data[1].creationDatetime)
-        expect(ans).toBe(true);
-        expect(res5.body.data.length).toBe(2);
-        console.log(res5.body.data.length);
+    let ans = (res5.body.data[0].creationDatetime) > (res5.body.data[1].creationDatetime)
+    expect(ans).toBe(true);
+    expect(res5.body.data.length).toBe(2);
+    console.log(res5.body.data.length);
                     
-    });
-
+    })
     it('should be able to see my tweets' , async()=>{
         const res6 = await request(app).get('/tweet/my-tweets')
                                         .set('Content-type' , 'application/json')
