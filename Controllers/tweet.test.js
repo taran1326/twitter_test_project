@@ -9,9 +9,14 @@ const { isAuth } = require('../Utils/Auth');
 describe('Check if email has a correct format' , ()=>{
     
 })
+
+
 describe('Check if name has a correct format' , ()=>{
 
 })
+
+
+
 describe('Check if username has a correct format' , ()=>{
     it('invalid username format (USERNAME LENGTH SMALLER THAN REQUIRED) , should give 401 code' , async()=>{
         const data = {
@@ -45,7 +50,8 @@ describe('Check if username has a correct format' , ()=>{
         expect(response.body).toHaveProperty('message');
     });
 
-})
+});
+
 
 describe('Check if password has a correct format' , ()=>{
     it('catch wrong password format (NOT ALPHANUMERIC) and give 401 code' , async()=>{
@@ -97,10 +103,12 @@ describe('Check if password has a correct format' , ()=>{
 
     });
 
-})
+});
+
+
+
 
 let res , res1 ; 
-
 describe('User X Sign Up functionality check' , ()=> {
        
     test('User X should be able to register and login if credentials are valid' , async()=>{
@@ -134,6 +142,9 @@ describe('User X Sign Up functionality check' , ()=> {
                                  });
     })
 });
+
+
+
 let response;
 describe('User X Create Tweeet functionality' , ()=>{
     test('user X should be able to create a new tweet' , async() =>{
