@@ -5,8 +5,9 @@ const { isAuth } = require('../Utils/Auth');
 // jest.setTimeout(40000);
 
 //tweet check same as sign up just check the ß_id property response
+describe('Validation checks' , ()=>{
 
-describe('Check if email has a correct format' , ()=>{
+    describe('Check if email has a correct format' , ()=>{
     it('email is not present' , async()=>{
         const data = {
             "name": "John",
@@ -40,10 +41,10 @@ describe('Check if email has a correct format' , ()=>{
 
     });
     
-})
+    });
 
 
-describe('Check if name has a correct format' , ()=>{
+    describe('Check if name has a correct format' , ()=>{
     it('name is not present' , async()=>{
         const data = {
             "name": "",
@@ -76,141 +77,143 @@ describe('Check if name has a correct format' , ()=>{
         expect(response.body).toHaveProperty('message');
 
     });
-})
+    });
 
 
+    describe('Check if username has a correct format' , ()=>{
+        it('username is not present' , async()=>{
+            const data = {
+                "name": "John",
+                "username": "",
+                "email": "john34@mail.com",
+                "password": "John1234"
+            }
+            
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+            console.log(JSON.stringify(response.body));
+            expect(response.body.status).toBe(401 );
+            expect(response.body).toHaveProperty('messsssage' );
 
-describe('Check if username has a correct format' , ()=>{
-    it('username is not present' , async()=>{
-        const data = {
-            "name": "John",
-            "username": "",
-            "email": "john34@mail.com",
-            "password": "John1234"
-        }
-        
-        const response = await request(app).post('/auth/register')
-                                           .set('Content-type' , 'application/json')
-                                           .send(data);
-        console.log(JSON.stringify(response.body));
-        expect(response.body.status).toBe(401);
-        expect(response.body).toHaveProperty('message');
+        });
+
+        it('USERNAME IS EQUAL TO EMAIL' , async()=> {
+            const data = {
+                "name": "John",
+                "username": "john34@mail.com",
+                "email": "john34@mail.com",
+                "password": "John1234" 
+            }
+        })
+
+        it('USERNAME LENGTH SMALLER THAN 3' , async()=>{
+            const data = {
+                "name": "John",
+                "username": "jo",
+                "email": "john34@mail.com",
+                "password": "John1234"
+            }
+            
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+            console.log(JSON.stringify(response.body));
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
+
+        });
+
+        it('USERNAME LENGTH GREATER THAN 50' , async()=>{
+            const data = {
+                "name":"John",
+                "username": "john1234567890john1234567890john1234567890john123456789",
+                "email": "john34@mail.com",
+                "password": "John1234"
+            }
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+            console.log(JSON.stringify(response.body));
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
+        });
 
     });
 
-    it('USERNAME IS EQUAL TO EMAIL' , async()=> {
-        const data = {
-            "name": "John",
-            "username": "john34@mail.com",
-            "email": "john34@mail.com",
-            "password": "John1234" 
-        }
-    })
 
-    it('USERNAME LENGTH SMALLER THAN 3' , async()=>{
-        const data = {
-            "name": "John",
-            "username": "jo",
-            "email": "john34@mail.com",
-            "password": "John1234"
-        }
-        
-        const response = await request(app).post('/auth/register')
-                                           .set('Content-type' , 'application/json')
-                                           .send(data);
-        console.log(JSON.stringify(response.body));
-        expect(response.body.status).toBe(401);
-        expect(response.body).toHaveProperty('message');
+    describe('Check if password has a correct format' , ()=>{
 
-    });
+        // it('password end point not correct')
+        it('password is not present' , async()=>{
+            const data = {
+                "name": "John",
+                "username": "John123",
+                "email": "john34@mail.com",
+                "password": ""
+            }
+            
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+            console.log(JSON.stringify(response.body));
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
 
-    it('USERNAME LENGTH GREATER THAN 50' , async()=>{
-        const data = {
-            "name":"John",
-            "username": "john1234567890john1234567890john1234567890john123456789",
-            "email": "john34@mail.com",
-            "password": "John1234"
-        }
-        const response = await request(app).post('/auth/register')
-                                           .set('Content-type' , 'application/json')
-                                           .send(data);
-        console.log(JSON.stringify(response.body));
-        expect(response.body.status).toBe(401);
-        expect(response.body).toHaveProperty('message');
+        });
+
+        it('PASSWORD NOT ALPHANUMERIC' , async()=>{
+            const data = {
+                "name": "John",
+                "username": "john123",
+                "email": "john34@mail.com",
+                "password": "John@1234"
+            }
+            
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+            console.log(JSON.stringify(response.body));
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
+
+        });
+        it('PASSWORD LENGTH LONGER THAN 200 CHARACTERS' , async()=>{
+            const data = {
+                "name": "John",
+                "username": "john123",
+                "email": "john34@mail.com",
+                "password": "John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234"
+            }
+            
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+            console.log(JSON.stringify(response.body));
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
+
+        });
+        it('PASSWORD LENGTH SHORTER THAN 6 CHARACTERS' , async()=>{
+            const data = {
+                "name": "John",
+                "username": "john123",
+                "email": "john34@mail.com",
+                "password": "Joh"
+            }
+            
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+            console.log(JSON.stringify(response.body));
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
+
+        });
+
     });
 
 });
-
-
-describe('Check if password has a correct format' , ()=>{
-    it('password is not present' , async()=>{
-        const data = {
-            "name": "John",
-            "username": "John123",
-            "email": "john34@mail.com",
-            "password": ""
-        }
-        
-        const response = await request(app).post('/auth/register')
-                                           .set('Content-type' , 'application/json')
-                                           .send(data);
-        console.log(JSON.stringify(response.body));
-        expect(response.body.status).toBe(401);
-        expect(response.body).toHaveProperty('message');
-
-    });
-
-    it('PASSWORD NOT ALPHANUMERIC' , async()=>{
-        const data = {
-            "name": "John",
-            "username": "john123",
-            "email": "john34@mail.com",
-            "password": "John@1234"
-        }
-        
-        const response = await request(app).post('/auth/register')
-                                           .set('Content-type' , 'application/json')
-                                           .send(data);
-        console.log(JSON.stringify(response.body));
-        expect(response.body.status).toBe(401);
-        expect(response.body).toHaveProperty('message');
-
-    });
-    it('PASSWORD LENGTH LONGER THAN 200 CHARACTERS' , async()=>{
-        const data = {
-            "name": "John",
-            "username": "john123",
-            "email": "john34@mail.com",
-            "password": "John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234"
-        }
-        
-        const response = await request(app).post('/auth/register')
-                                           .set('Content-type' , 'application/json')
-                                           .send(data);
-        console.log(JSON.stringify(response.body));
-        expect(response.body.status).toBe(401);
-        expect(response.body).toHaveProperty('message');
-
-    });
-    it('PASSWORD LENGTH SHORTER THAN 6 CHARACTERS' , async()=>{
-        const data = {
-            "name": "John",
-            "username": "john123",
-            "email": "john34@mail.com",
-            "password": "Joh"
-        }
-        
-        const response = await request(app).post('/auth/register')
-                                           .set('Content-type' , 'application/json')
-                                           .send(data);
-        console.log(JSON.stringify(response.body));
-        expect(response.body.status).toBe(401);
-        expect(response.body).toHaveProperty('message');
-
-    });
-
-});
-
 
 
 
@@ -239,15 +242,24 @@ describe('User X Sign Up functionality check' , ()=> {
         
     });
 
-    it('should be able to login user 1' , async()=>{
+});
+
+describe('User X Sign In functionality check ', ()=>{
+    it('User X should be able to sign in with valid credentials' , async()=>{
         res1 = await request(app).post('/auth/login')
                                  .set('Content-type', 'application/json')
                                  .send({
                                         'loginId':"john1353",
                                         'password':'John1234'
-                                 });
+                                 }).expect(200);
+        expect(res1.body).toHaveProperty('message');
+        expect(res1.body.data).toHaveProperty('email');
+        expect(res1.body.data).toHaveProperty('_id');
+        expect(res1.body.data).toHaveProperty('username');
     })
-});
+}); 
+
+
 
 
 
@@ -276,6 +288,19 @@ describe('User X Create Tweeet functionality' , ()=>{
         expect(response.body.data).toHaveProperty('userId');
     
     });
+})
+
+let res7;
+describe('User X and User Y Logout functionality' , ()=>{
+    it('User should be able to logout successfully' , async()=>{
+        res7 = await request(app).post('/auth/logout')
+                           .set('Cookie' , res1.headers['set-cookie'])
+                           .expect(200);
+        expect(res7.body).toHaveProperty('message');
+        expect(res7.body.data).toHaveProperty('email');
+        // expect(res7.body.data).toHaveProperty('message');
+
+    })
 })
 
 let res2 , res3 , res4;
@@ -352,6 +377,8 @@ describe('User Y should able to see his/her feed ' , ()=> {
         console.log(res6.body.data.length);
     })
 });
+
+
 
         
                                     
