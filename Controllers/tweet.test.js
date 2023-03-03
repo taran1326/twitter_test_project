@@ -6,10 +6,48 @@ const { isAuth } = require('../Utils/Auth');
 
 //tweet check same as sign up just check the ß_id property response
 
+describe('Check if email has a correct format' , ()=>{
+    
+})
+describe('Check if name has a correct format' , ()=>{
 
-describe('Sign Up , Login , Create-tweet , explore feed , my-tweet functionality check' , ()=> {
-    let res , res1 , res2, res3 , res4 ,res5 ,response;    
+})
+describe('Check if username has a correct format' , ()=>{
+    it('invalid username format (USERNAME LENGTH SMALLER THAN REQUIRED) , should give 401 code' , async()=>{
+        const data = {
+            "name": "John",
+            "username": "jo",
+            "email": "john34@mail.com",
+            "password": "John1234"
+        }
+        
+        const response = await request(app).post('/auth/register')
+                                           .set('Content-type' , 'application/json')
+                                           .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
 
+    });
+
+    it('wrong username format (USERNAME LENGTH GREATER THAN REQUIRED) , should give 401 code' , async()=>{
+        const data = {
+            "name":"John",
+            "username": "john1234567890john1234567890john1234567890john123456789",
+            "email": "john34@mail.com",
+            "password": "John1234"
+        }
+        const response = await request(app).post('/auth/register')
+                                           .set('Content-type' , 'application/json')
+                                           .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
+    });
+
+})
+
+describe('Check if password has a correct format' , ()=>{
     it('catch wrong password format (NOT ALPHANUMERIC) and give 401 code' , async()=>{
         const data = {
             "name": "John",
@@ -59,41 +97,13 @@ describe('Sign Up , Login , Create-tweet , explore feed , my-tweet functionality
 
     });
 
+})
 
-    it('invalid username format (USERNAME LENGTH SMALLER THAN REQUIRED) , should give 401 code' , async()=>{
-        const data = {
-            "name": "John",
-            "username": "jo",
-            "email": "john34@mail.com",
-            "password": "John1234"
-        }
-        
-        const response = await request(app).post('/auth/register')
-                                           .set('Content-type' , 'application/json')
-                                           .send(data);
-        console.log(JSON.stringify(response.body));
-        expect(response.body.status).toBe(401);
-        expect(response.body).toHaveProperty('message');
+let res , res1 ; 
 
-    });
-
-    it('wrong username format (USERNAME LENGTH GREATER THAN REQUIRED) , should give 401 code' , async()=>{
-        const data = {
-            "name":"John",
-            "username": "john1234567890john1234567890john1234567890john123456789",
-            "email": "john34@mail.com",
-            "password": "John1234"
-        }
-        const response = await request(app).post('/auth/register')
-                                           .set('Content-type' , 'application/json')
-                                           .send(data);
-        console.log(JSON.stringify(response.body));
-        expect(response.body.status).toBe(401);
-        expect(response.body).toHaveProperty('message');
-    });
-
-
-    it('should be able to register user 1' , async()=>{
+describe('User X Sign Up functionality check' , ()=> {
+       
+    test('User X should be able to register and login if credentials are valid' , async()=>{
         const data = {
             "name": "John",
             "username": "john1353",
@@ -123,8 +133,10 @@ describe('Sign Up , Login , Create-tweet , explore feed , my-tweet functionality
                                         'password':'John1234'
                                  });
     })
-
-    it('should be able to create a new tweet' , async() =>{
+});
+let response;
+describe('User X Create Tweeet functionality' , ()=>{
+    test('user X should be able to create a new tweet' , async() =>{
         const creationDatetime = new Date();
         console.log(console.dir(res1.body));
         const data1 = {
@@ -145,11 +157,13 @@ describe('Sign Up , Login , Create-tweet , explore feed , my-tweet functionality
 
         expect(response.statusCode).toBe(200);
         expect(response.body.data).toHaveProperty('userId');
-        
+    
     });
+})
 
-
-    it('should be able to register , sign in and (USER 2)' , async() =>{
+let res2 , res3 , res4;
+describe('User Y should be able to sign up , sign in and create a tweet with valid credentials' , ()=>{
+    it('User Y should be able to sign up' , async() =>{
         const data2 = {
             "name": "Taran",
             "username": "taran1326",
@@ -160,13 +174,18 @@ describe('Sign Up , Login , Create-tweet , explore feed , my-tweet functionality
         JSON.stringify(data2);
         res2 = await request(app).post('/auth/register').set('Content-type', 'application/json')
                                              .send(data2);
-        res3 = await request(app).post('/auth/login').set('Content-type', 'application/json')
-                                          .send({
-                                             'loginId':"taran1326",
-                                             'password':'Taran1326'
-                                          });
-                                    
-        // console.log(console.dir(res.headers));
+    });
+
+    it('User Y should be able to sign in', async()=>{
+        res3 = await request(app).post('/auth/login')
+                                 .set('Content-type', 'application/json')
+                                 .send({
+                                        'loginId':"taran1326",
+                                        'password':'Taran1326'
+                                    });
+    });
+
+    it('User Y should be able to create a tweet successfully' , async()=>{
         const creationDatetime1 = new Date();
         const data3 = {
             'title':'Hello world!', 
@@ -185,24 +204,28 @@ describe('Sign Up , Login , Create-tweet , explore feed , my-tweet functionality
         expect(res4.statusCode).toBe(200);
         expect(res4.body.data).toHaveProperty('userId');
     })
+});
 
+let res5;
+describe('User Y should be able to see feed of all the tweeters' , ()=>  {
     it('should get all tweets and should be stored in chronological order' , async()=>{
-
-
-
-        //redundant code
 
         res5 = await request(app).get('/tweet/feed')
                     .set('Cookie' , res3.headers['set-cookie'])
                     .set('Content-type' , 'application/json')
                     .expect(200)
 
-    let ans = (res5.body.data[0].creationDatetime) > (res5.body.data[1].creationDatetime)
-    expect(ans).toBe(true);
-    expect(res5.body.data.length).toBe(2);
-    console.log(res5.body.data.length);
+        let ans = (res5.body.data[0].creationDatetime) > (res5.body.data[1].creationDatetime)
+        expect(ans).toBe(true);
+        expect(res5.body.data.length).toBe(2);
+        console.log(res5.body.data.length);
                     
     })
+});
+
+
+let res6;
+describe('User Y should able to see his/her feed ' , ()=> {
     it('should be able to see my tweets' , async()=>{
         const res6 = await request(app).get('/tweet/my-tweets')
                                         .set('Content-type' , 'application/json')
@@ -211,6 +234,13 @@ describe('Sign Up , Login , Create-tweet , explore feed , my-tweet functionality
         expect(res6.body.data.length).toBe(1);
         console.log(res6.body.data.length);
     })
+});
 
-})
+        
+                                    
+        // console.log(console.dir(res.headers))
+
+    
+    
+
 
