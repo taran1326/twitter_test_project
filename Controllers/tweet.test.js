@@ -7,10 +7,10 @@ const { isAuth } = require('../Utils/Auth');
 //tweet check same as sign up just check the ß_id property response
 
 
-describe('Create Tweet' , ()=> {
+describe('Sign Up , Login , Create-tweet , explore feed , my-tweet functionality check' , ()=> {
     let res , res1 , res2, res3 , res4 ,res5 ,response;    
 
-    it('should be able to catch wrong password format (NOT ALPHANUMERIC) and give 401 code' , async()=>{
+    it('catch wrong password format (NOT ALPHANUMERIC) and give 401 code' , async()=>{
         const data = {
             "name": "John",
             "username": "john123",
@@ -26,6 +26,39 @@ describe('Create Tweet' , ()=> {
         expect(response.body).toHaveProperty('message');
 
     });
+    it('catch wrong password format (PASSWORD LENGTH LONGER THAN PERMISSED) should ,give 401 code' , async()=>{
+        const data = {
+            "name": "John",
+            "username": "john123",
+            "email": "john34@mail.com",
+            "password": "John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234"
+        }
+        
+        const response = await request(app).post('/auth/register')
+                                           .set('Content-type' , 'application/json')
+                                           .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
+
+    });
+    it('catch wrong password format (PASSWORD LENGTH SHORTER THAN PERMISSED) and give 401 code' , async()=>{
+        const data = {
+            "name": "John",
+            "username": "john123",
+            "email": "john34@mail.com",
+            "password": "Joh"
+        }
+        
+        const response = await request(app).post('/auth/register')
+                                           .set('Content-type' , 'application/json')
+                                           .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
+
+    });
+
 
     it('invalid username format (USERNAME LENGTH SMALLER THAN REQUIRED) , should give 401 code' , async()=>{
         const data = {
@@ -43,6 +76,22 @@ describe('Create Tweet' , ()=> {
         expect(response.body).toHaveProperty('message');
 
     });
+
+    it('wrong username format (USERNAME LENGTH GREATER THAN REQUIRED) , should give 401 code' , async()=>{
+        const data = {
+            "name":"John",
+            "username": "john1234567890john1234567890john1234567890john123456789",
+            "email": "john34@mail.com",
+            "password": "John1234"
+        }
+        const response = await request(app).post('/auth/register')
+                                           .set('Content-type' , 'application/json')
+                                           .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
+    });
+
 
     it('should be able to register user 1' , async()=>{
         const data = {
