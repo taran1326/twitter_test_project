@@ -7,18 +7,107 @@ const { isAuth } = require('../Utils/Auth');
 //tweet check same as sign up just check the ß_id property response
 
 describe('Check if email has a correct format' , ()=>{
+    it('email is not present' , async()=>{
+        const data = {
+            "name": "John",
+            "username": "john12",
+            "email":"",
+            "password": "John1234"
+        }
+        
+        const response = await request(app).post('/auth/register')
+                                           .set('Content-type' , 'application/json')
+                                           .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
+
+    });
+    it('email has wrong format (missing @ and .)' , async()=>{
+        const data = {
+            "name": "John",
+            "username": "john12",
+            "email": "john34mailcom",
+            "password": "John1234"
+        }
+        
+        const response = await request(app).post('/auth/register')
+                                           .set('Content-type' , 'application/json')
+                                           .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
+
+    });
     
 })
 
 
 describe('Check if name has a correct format' , ()=>{
+    it('name is not present' , async()=>{
+        const data = {
+            "name": "",
+            "username": "john124",
+            "email": "john34@mail.com",
+            "password": "John1234"
+        }
+        
+        const response = await request(app).post('/auth/register')
+                                           .set('Content-type' , 'application/json')
+                                           .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
 
+    });
+    it('NAME LENGTH LONGER THAN 100 CHARACTERS' , async()=>{
+        const data = {
+            "name": "JohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohn",
+            "username": "john12",
+            "email": "john34@mail.com",
+            "password": "John1234"
+        }
+        
+        const response = await request(app).post('/auth/register')
+                                           .set('Content-type' , 'application/json')
+                                           .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
+
+    });
 })
 
 
 
 describe('Check if username has a correct format' , ()=>{
-    it('invalid username format (USERNAME LENGTH SMALLER THAN REQUIRED) , should give 401 code' , async()=>{
+    it('username is not present' , async()=>{
+        const data = {
+            "name": "John",
+            "username": "",
+            "email": "john34@mail.com",
+            "password": "John1234"
+        }
+        
+        const response = await request(app).post('/auth/register')
+                                           .set('Content-type' , 'application/json')
+                                           .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
+
+    });
+
+    it('USERNAME IS EQUAL TO EMAIL' , async()=> {
+        const data = {
+            "name": "John",
+            "username": "john34@mail.com",
+            "email": "john34@mail.com",
+            "password": "John1234" 
+        }
+    })
+
+    it('USERNAME LENGTH SMALLER THAN 3' , async()=>{
         const data = {
             "name": "John",
             "username": "jo",
@@ -35,7 +124,7 @@ describe('Check if username has a correct format' , ()=>{
 
     });
 
-    it('wrong username format (USERNAME LENGTH GREATER THAN REQUIRED) , should give 401 code' , async()=>{
+    it('USERNAME LENGTH GREATER THAN 50' , async()=>{
         const data = {
             "name":"John",
             "username": "john1234567890john1234567890john1234567890john123456789",
@@ -54,7 +143,24 @@ describe('Check if username has a correct format' , ()=>{
 
 
 describe('Check if password has a correct format' , ()=>{
-    it('catch wrong password format (NOT ALPHANUMERIC) and give 401 code' , async()=>{
+    it('password is not present' , async()=>{
+        const data = {
+            "name": "John",
+            "username": "John123",
+            "email": "john34@mail.com",
+            "password": ""
+        }
+        
+        const response = await request(app).post('/auth/register')
+                                           .set('Content-type' , 'application/json')
+                                           .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
+
+    });
+
+    it('PASSWORD NOT ALPHANUMERIC' , async()=>{
         const data = {
             "name": "John",
             "username": "john123",
@@ -70,7 +176,7 @@ describe('Check if password has a correct format' , ()=>{
         expect(response.body).toHaveProperty('message');
 
     });
-    it('catch wrong password format (PASSWORD LENGTH LONGER THAN PERMISSED) should ,give 401 code' , async()=>{
+    it('PASSWORD LENGTH LONGER THAN 200 CHARACTERS' , async()=>{
         const data = {
             "name": "John",
             "username": "john123",
@@ -86,7 +192,7 @@ describe('Check if password has a correct format' , ()=>{
         expect(response.body).toHaveProperty('message');
 
     });
-    it('catch wrong password format (PASSWORD LENGTH SHORTER THAN PERMISSED) and give 401 code' , async()=>{
+    it('PASSWORD LENGTH SHORTER THAN 6 CHARACTERS' , async()=>{
         const data = {
             "name": "John",
             "username": "john123",
