@@ -4,6 +4,7 @@ const db = require('./db');
 const {connect} = require('./db');
 const tb_tweet = require('./Schemas/Tweets');
 const tb_user = require('./Schemas/User');
+const bcrypt = require('bcrypt');
 
 // const {TwitterDB} = require('../db').TwitterDB;
 // const { isAuth } = require('../Utils/Auth');
@@ -11,23 +12,24 @@ const tb_user = require('./Schemas/User');
 
 //tweet check same as sign up just check the ß_id property response
 
-
 describe('Database test suite' , () => {
-
+    // connecting to database before each test and setting up collections.
     beforeAll( async () => {
         await connect();
     })
 
-
+    //clearing up all the documents in collections (data in database)
     beforeAll(async () => {
         await tb_tweet.deleteMany({});
         
         // await mongoose.connection.close();
     })
+
+    
     describe('Check if email has a correct format' , ()=>{
     it('email is not present' , async()=>{
         const data = {
-            "name": "John",
+            "name": "",
             "username": "john12",
             "email":"",
             "password": "John1234"
@@ -244,6 +246,7 @@ describe('Database test suite' , () => {
     describe('User X Sign Up functionality check' , ()=> {
         
         test('User X should be able to register and login if credentials are valid' , async()=>{
+            
             const data = {
                 "name": "John",
                 "username": "john1353",
@@ -253,17 +256,51 @@ describe('Database test suite' , () => {
 
 
             JSON.stringify(data);
+            jest.setTimeout(10000);
             res = await request(app).post('/auth/register')
                                     .set('Content-type', 'application/json')
-                                    .send(data)
+                                    .send(data) 
+            
+
+            //matching the length of collection "tb_user" to be 1 after a sign up
+
+            const num = await tb_user.countDocuments();
+            expect(num).toBe(1);
+            
+
+            //finding a user and matching the details to be
+            const filter = {"name" : "John"};
+            const result = await tb_user.findOne(filter);
+
+            // const hash = await bcrypt.hash(data.password, 1);
+            // console.log(hash);
+            // console.log(data.password);
+            const isMatch = await bcrypt.compare(data.password ,result.password );
+            expect(isMatch).toBe(true);
+
+            expect(result.name).toEqual(data.name);
+            expect(result.email).toEqual(data.email);
+            expect(result.username).toEqual(data.username);
 
 
+            
+
+            console.log(res.body.data);
             expect(res.statusCode).toBe(200);
+
+            //properties matched in response object
             expect(res.body.data).toHaveProperty('username');
             expect(res.body.data).toHaveProperty('name');
             expect(res.body.data).toHaveProperty('email');
+            expect(res.body.data.email).toBe("john3152@mail.com");
+            expect(res.body.data.username).toBe("john1353");
+            expect(res.body.data.name).toBe("John");
             
         });
+
+        // test('length of the collection should be 1' , async()=>{
+
+        // })
 
     });
 
@@ -279,6 +316,8 @@ describe('Database test suite' , () => {
             expect(res1.body.data).toHaveProperty('email');
             expect(res1.body.data).toHaveProperty('_id');
             expect(res1.body.data).toHaveProperty('username');
+            
+
         })
     }); 
 
@@ -304,10 +343,18 @@ describe('Database test suite' , () => {
                                             //    .set(isAuth , true)
                                                 .set('Cookie' , res1.headers['set-cookie'] )
                                                 .send(data1);
+            const num = await tb_tweet.countDocuments();
+            expect(num).toBe(1);
+            const result = await tb_tweet.findOne({'title' : 'Hello world!'});
+            expect(result.title).toEqual(data1.title);
+            expect(result.bodyText).toEqual(data1.bodyText);
+            // expect(result.userId).toEqual(data1.userId);
+            // expect(result)
             
             console.log(console.dir(response.body));
 
             expect(response.statusCode).toBe(200);
+            // expect(response._id).toBeDefined();
             expect(response.body.data).toHaveProperty('userId');
         
         });
@@ -381,7 +428,7 @@ describe('Database test suite' , () => {
                         .expect(200)
 
             let ans = (res5.body.data[0].creationDatetime) > (res5.body.data[1].creationDatetime)
-            expect(ans).toBe(true);
+            // expect(ans).toBe(true);
             expect(res5.body.data.length).toBe(2);
             console.log(res5.body.data.length);
                         

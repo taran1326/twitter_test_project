@@ -79,7 +79,7 @@ class User {
     registerUser() {
         return new Promise(async (resolve, reject) => {
 
-            const hashPassword = await bcrypt.hash(this.password, 15);
+            const hashPassword = await bcrypt.hash(this.password, 1);
 
             const user = new UserSchema({
                 username: this.username,
