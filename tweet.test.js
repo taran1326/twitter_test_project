@@ -708,15 +708,21 @@ describe('Database test suite' , () => {
     let res , res1 ; 
 
     describe('User X Sign Up functionality check' , ()=> {
+        const data = {
+            "name": "John",
+            "username": "john1353",
+            "email": "john3152@mail.com",
+            "password": "John1234"
+        }
         
         test('User X should be able to register and login if credentials are valid' , async()=>{
             
-            const data = {
-                "name": "John",
-                "username": "john1353",
-                "email": "john3152@mail.com",
-                "password": "John1234"
-            }
+            // const data = {
+            //     "name": "John",
+            //     "username": "john1353",
+            //     "email": "john3152@mail.com",
+            //     "password": "John1234"
+            // }
 
 
             JSON.stringify(data);
@@ -724,32 +730,9 @@ describe('Database test suite' , () => {
             res = await request(app).post('/auth/register')
                                     .set('Content-type', 'application/json')
                                     .send(data) 
-            
-
-            //matching the length of collection "tb_user" to be 1 after a sign up
-
-            // const num = await tb_user.countDocuments();
-            // expect(num).toBe(1);
-            
-
-            //finding a user and matching the details to be
-            // const result = await tb_user.findOne({'name' : 'John'});
-
-            // const hash = await bcrypt.hash(data.password, 1);
-            // console.log(hash);
-            // console.log(data.password);
-            // const isMatch = await bcrypt.compare(data.password ,result.password );
-            // expect(isMatch).toBe(true);
-
-
-
-
-            
-
+        
             console.log(res.body.data);
             expect(res.statusCode).toBe(200);
-
-            //properties matched in response object
             expect(res.body.data).toHaveProperty('username');
             expect(res.body.data).toHaveProperty('name');
             expect(res.body.data).toHaveProperty('email');
@@ -760,28 +743,26 @@ describe('Database test suite' , () => {
         });
 
         it('if user X signs up length of collection should increase' , async()=>{
-            const data = {
-                "name": "John",
-                "username": "john1353",
-                "email": "john3152@mail.com",
-                "password": "John1234"
-            }
             const num = await tb_user.countDocuments();
             expect(num).toBe(1);
+
+        })
+        it('finding user in database' , async()=>{
+            
             const result = await tb_user.findOne({'name':'John'});
-            const isMatch = await bcrypt.compare(data.password ,result.password );
-            expect(isMatch).toBe(true);
             expect(result.name).toEqual(data.name);
             expect(result.email).toEqual(data.email);
             expect(result.username).toEqual(data.username);
 
 
+            const isMatch = await bcrypt.compare(data.password ,result.password );
+            expect(isMatch).toBe(true);
         }) 
 
-        // test('length of the collection should be 1' , async()=>{
 
-        // })
-
+        it('matching password and encrypt password' , async()=>{
+           
+        })
     });
 
     describe('User X Sign In functionality check ', ()=>{
@@ -799,22 +780,22 @@ describe('Database test suite' , () => {
             
 
         })
-
-
     }); 
-
-
-
-
 
     let response;
     describe('User X Create Tweeet functionality' , ()=>{
+
+        // beforeEach(done => {
+        //     setTimeout(() => {
+        //       done();
+        //     }, 2000); // delay for 2 seconds
+        // });
         test('user X should be able to create a new tweet' , async() =>{
             const creationDatetime = new Date();
             console.log(console.dir(res1.body));
             const data1 = {
-                'title':'Hello world!', 
-                'bodyText':'Helloworld i am tester',
+                'title':'User X', 
+                'bodyText':'Helloworld i am tester 1',
                 'userId':res1.body.data._id,
                 'creationDatetime':creationDatetime
 
@@ -827,16 +808,14 @@ describe('Database test suite' , () => {
                                                 .send(data1);
             const num = await tb_tweet.countDocuments();
             expect(num).toBe(1);
-            const result = await tb_tweet.findOne({'title' : 'Hello world!'});
+            const result = await tb_tweet.findOne({'title' : 'User X'});
             expect(result.title).toEqual(data1.title);
             expect(result.bodyText).toEqual(data1.bodyText);
-            // expect(result.userId).toEqual(data1.userId);
-            // expect(result)
-            
+
             console.log(console.dir(response.body));
 
             expect(response.statusCode).toBe(200);
-            // expect(response._id).toBeDefined();
+
             expect(response.body.data).toHaveProperty('userId');
         
         });
@@ -857,6 +836,11 @@ describe('Database test suite' , () => {
 
     let res2 , res3 , res4;
     describe('User Y should be able to sign up , sign in and create a tweet with valid credentials' , ()=>{
+        beforeAll(done => {
+            setTimeout(() => {
+              done();
+            }, 2000); // delay for 2 seconds
+        });
         it('User Y should be able to sign up' , async() =>{
             const data2 = {
                 "name": "Taran",
@@ -882,8 +866,8 @@ describe('Database test suite' , () => {
         it('User Y should be able to create a tweet successfully' , async()=>{
             const creationDatetime1 = new Date();
             const data3 = {
-                'title':'Hello world!', 
-                'bodyText':'Helloworld i am tester',
+                'title':'User Y', 
+                'bodyText':'Helloworld i am tester 2',
                 'userId':res3.body.data._id,
                 'creationDatetime':creationDatetime1
 
@@ -909,12 +893,14 @@ describe('Database test suite' , () => {
                         .set('Content-type' , 'application/json')
                         .expect(200)
 
+            console.log(console.dir(res5.body));
             let ans = (res5.body.data[0].creationDatetime) > (res5.body.data[1].creationDatetime)
             // expect(ans).toBe(true);
             expect(res5.body.data.length).toBe(2);
             console.log(res5.body.data.length);
                         
         })
+
     });
 
 
