@@ -4,8 +4,15 @@ const db = require('./db');
 const {connect} = require('./db');
 const tb_tweet = require('./Schemas/Tweets');
 const tb_user = require('./Schemas/User');
-// const tb_session = require('./index');
 const bcrypt = require('bcrypt');
+
+
+
+
+
+
+
+
 
 //tweet check same as sign up just check the ß_id property response
 
@@ -17,11 +24,10 @@ describe('Database test suite' , () => {
 
     //clearing up all the documents in collections (data in database)
     beforeAll(async () => {
-        await tb_tweet.deleteMany({});
+    //Session deletion before every iteration
         await store.clear();
-        
-        // await mongoose.connection.close();
-    })
+    // await mongoose.connection.close();
+     })
 
     
     describe('Check if email has a correct format' , ()=>{
@@ -238,6 +244,7 @@ describe('Database test suite' , () => {
 
 
     beforeAll(async () =>{
+        await tb_tweet.deleteMany({});
         await tb_user.deleteMany({});
     })
     let res , res1 ; 
@@ -325,6 +332,9 @@ describe('Database test suite' , () => {
         })
     });
 
+
+
+
     describe('User X Sign In functionality check ', ()=>{
         it('should give an error (500 code) if password missing' , async() => {
             const response1 = await request(app).post('/auth/login')
@@ -366,6 +376,8 @@ describe('Database test suite' , () => {
 
         })
 
+        
+
 
         it('User X should be able to sign in with valid credentials' , async()=>{
             res1 = await request(app).post('/auth/login')
@@ -393,6 +405,10 @@ describe('Database test suite' , () => {
             
 
         })
+        
+
+
+
     }); 
 
     let response;
@@ -403,6 +419,46 @@ describe('Database test suite' , () => {
         //       done();
         //     }, 2000); // delay for 2 seconds
         // });
+
+        test('should give an error if bodyText is missing' , async()=>{
+            const creationDatetime = new Date();
+
+            const data1 = {
+                'title':'User X', 
+                'userId':res1.body.data._id,
+                'creationDatetime':creationDatetime
+
+            }
+
+            const response = await request(app).post('/tweet/create-tweet')
+                                            //    .set(isAuth , true)
+                                                .set('Cookie' , res1.headers['set-cookie'] )
+                                                .send(data1);
+
+            expect(response.body.status).toBe(500);
+
+        })
+
+        test('should give an error if title is missing' , async()=>{
+            const creationDatetime = new Date();
+
+            const data1 = {
+                'bodyText' : 'hello world I am tester testing', 
+                'userId':res1.body.data._id,
+                'creationDatetime':creationDatetime
+
+            }
+
+            const response = await request(app).post('/tweet/create-tweet')
+                                            //    .set(isAuth , true)
+                                                .set('Cookie' , res1.headers['set-cookie'] )
+                                                .send(data1);
+
+            expect(response.body.status).toBe(500);
+            
+        })
+
+
         test('user X should be able to create a new tweet' , async() =>{
 
             const creationDatetime = new Date();
@@ -435,15 +491,22 @@ describe('Database test suite' , () => {
     })
 
     let res7;
-    describe('User X and User Y Logout functionality' , ()=>{
+    describe('User X Logout functionality' , ()=>{
         it('User should be able to logout successfully' , async()=>{
+            
             res7 = await request(app).post('/auth/logout')
                             .set('Cookie' , res1.headers['set-cookie'])
                             .expect(200);
+
             expect(res7.body).toHaveProperty('message');
             expect(res7.body.data).toHaveProperty('email');
             // expect(res7.body.data).toHaveProperty('message');
 
+        })
+        test('logout unsuccesful if user x not logged in' , async()=> {
+            const response = await request(app).post('/auth/logout')
+            console.log(console.dir(response.body));
+            expect(response.body.status).toBe(404);
         })
     })
 
