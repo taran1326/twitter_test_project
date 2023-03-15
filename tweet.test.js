@@ -4,6 +4,7 @@ const db = require('./db');
 const {connect} = require('./db');
 const tb_tweet = require('./Schemas/Tweets');
 const tb_user = require('./Schemas/User');
+const tb_session = require('./index').store;
 const bcrypt = require('bcrypt');
 
 //tweet check same as sign up just check the ß_id property response
@@ -17,6 +18,7 @@ describe('Database test suite' , () => {
     //clearing up all the documents in collections (data in database)
     beforeAll(async () => {
         await tb_tweet.deleteMany({});
+        // await tb_session.clear();
         
         // await mongoose.connection.close();
     })
@@ -293,12 +295,78 @@ describe('Database test suite' , () => {
         }) 
 
 
-        it('matching password and encrypt password' , async()=>{
-           
+        it('should give an error if the user exists (same email)' , async() => {
+            const data = {
+                "name": "John",
+                "username": "john1355",
+                "email": "john3152@mail.com",
+                "password": "John1234"
+            }
+            const response = await request(app).post('/auth/register')
+                                    .set('Content-type', 'application/json')
+                                    .send(data)
+                                    
+            expect(response.body.status).toBe(401);
+        })
+
+        it('should give an error if the user exists (same username)' , async() => {
+
+            const data = {
+                "name": "John",
+                "username": "john1353",
+                "email": "john3156@mail.com",
+                "password": "John1234"
+            }
+            const response = await request(app).post('/auth/register')
+                                    .set('Content-type', 'application/json')
+                                    .send(data)
+                                    
+            expect(response.body.status).toBe(401);
         })
     });
 
     describe('User X Sign In functionality check ', ()=>{
+        it('should give an error (500 code) if password missing' , async() => {
+            const response1 = await request(app).post('/auth/login')
+                                    .set('Content-type', 'application/json')
+                                    .send({
+                                            'loginId':"john1353"
+                                    })
+            expect(response1.body.status).toBe(500);
+        })
+        it('should give an error (500 code) if loginID missing' , async() => {
+            const errorSignInLoginID = await request(app).post('/auth/login')
+                                    .set('Content-type', 'application/json')
+                                    .send({
+                                            'password':'John1234'
+                                    })
+            expect(errorSignInLoginID.body.status).toBe(500);
+
+        })
+
+        it('should give an error (404 code) if user has not registered before' , async() => {
+            const errorNoUserFound = await request(app).post('/auth/login')
+                                    .set('Content-type', 'application/json')
+                                    .send({
+                                            'loginId':'Taran123',
+                                            'password':'John1234'
+                                    })
+            expect(errorNoUserFound.body.status).toBe(404);
+
+        })
+
+        it('should give an error (404 code) if user enters wrong password' , async() => {
+            const errorNoUserFound = await request(app).post('/auth/login')
+                                    .set('Content-type', 'application/json')
+                                    .send({
+                                        'loginId':"john1353",
+                                        'password':'John1236'
+                                    })
+            expect(errorNoUserFound.body.status).toBe(404);
+
+        })
+
+
         it('User X should be able to sign in with valid credentials' , async()=>{
             res1 = await request(app).post('/auth/login')
                                     .set('Content-type', 'application/json')
@@ -306,6 +374,18 @@ describe('Database test suite' , () => {
                                             'loginId':"john1353",
                                             'password':'John1234'
                                     }).expect(200);
+
+
+            //fetched user from database and matched loginId of input data with username of fetched user
+
+            const fetchUserSignIn = await tb_user.findOne({' loginId' : "john1353" });
+            expect(fetchUserSignIn.username).toEqual("john1353");
+            
+
+            //fetched password of user from database 
+            const boolAns = await bcrypt.compare('John1234' , fetchUserSignIn.password);
+            expect(boolAns).toBeTruthy();
+
             expect(res1.body).toHaveProperty('message');
             expect(res1.body.data).toHaveProperty('email');
             expect(res1.body.data).toHaveProperty('_id');
@@ -324,8 +404,9 @@ describe('Database test suite' , () => {
         //     }, 2000); // delay for 2 seconds
         // });
         test('user X should be able to create a new tweet' , async() =>{
+
             const creationDatetime = new Date();
-            console.log(console.dir(res1.body));
+
             const data1 = {
                 'title':'User X', 
                 'bodyText':'Helloworld i am tester 1',
@@ -333,7 +414,7 @@ describe('Database test suite' , () => {
                 'creationDatetime':creationDatetime
 
             }
-            JSON.stringify(data1);
+            JSON.stringify(data1)
 
             response = await request(app).post('/tweet/create-tweet')
                                             //    .set(isAuth , true)
@@ -341,16 +422,14 @@ describe('Database test suite' , () => {
                                                 .send(data1);
 
 
-            const num = await tb_tweet.countDocuments();
+            const lenDatabaseTweetsX = await tb_tweet.countDocuments();
             const result = await tb_tweet.findOne({'title' : 'User X'});
-            expect(num).toBe(1); //on signing up length of collection should increase by one
+            expect(lenDatabaseTweetsX).toBe(1); //on signing up length of collection should increase by one
 
             expect(result.title).toEqual(data1.title); //fetching data from database and matching with input data
             expect(result.bodyText).toEqual(data1.bodyText);
             expect(response.statusCode).toBe(200);
             expect(response.body.data).toHaveProperty('userId');
-
-            console.log(console.dir(response.body));
         
         });
     })
@@ -374,7 +453,7 @@ describe('Database test suite' , () => {
             setTimeout(() => {
               done();
             }, 2000); // delay for 2 seconds
-        });
+        }); // this is done as it creates a gap of 2 seconds between first and secnd tweet to check in future tests if the tweets are displayed in chronological order or not.
         it('User Y should be able to sign up' , async() =>{
             const data2 = {
                 "name": "Taran",
@@ -412,9 +491,20 @@ describe('Database test suite' , () => {
                                                 .set('Cookie' , res3.headers['set-cookie'] )
                                                 .send(data3);
             // console.log(JSON.stringify(response.body));
+
             console.log(console.dir(res4.body));
+
+
+            const fetchedUserY = await tb_tweet.findOne({'title' : 'User Y'});
             expect(res4.statusCode).toBe(200);
             expect(res4.body.data).toHaveProperty('userId');
+            expect(fetchedUserY.bodyText).toEqual(data3.bodyText); //matching the body text by fetching the user from database and the input user object , this will work only if database is created.
+        })
+
+
+        test('tb_tweet collection should have 2 tweets now' , async()=>{
+            const lenTweets = await tb_tweet.countDocuments();
+            expect(lenTweets).toEqual(2);
         })
     });
 
@@ -429,11 +519,13 @@ describe('Database test suite' , () => {
 
             console.log(console.dir(res5.body));
             let ans = (res5.body.data[0].creationDatetime) > (res5.body.data[1].creationDatetime)
-            // expect(ans).toBe(true);
+
             expect(res5.body.data.length).toBe(2);
             console.log(res5.body.data.length);
                         
         })
+
+        
 
     });
 
