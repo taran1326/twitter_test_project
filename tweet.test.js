@@ -1,10 +1,10 @@
 const request = require('supertest');
-const app = require('./index');
+const {app , store} = require('./index');
 const db = require('./db');
 const {connect} = require('./db');
 const tb_tweet = require('./Schemas/Tweets');
 const tb_user = require('./Schemas/User');
-const tb_session = require('./index').store;
+// const tb_session = require('./index');
 const bcrypt = require('bcrypt');
 
 //tweet check same as sign up just check the ß_id property response
@@ -18,7 +18,7 @@ describe('Database test suite' , () => {
     //clearing up all the documents in collections (data in database)
     beforeAll(async () => {
         await tb_tweet.deleteMany({});
-        // await tb_session.clear();
+        await store.clear();
         
         // await mongoose.connection.close();
     })

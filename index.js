@@ -37,5 +37,4 @@ app.get('/', (req, res) => {
         message: "Welcome"
     })
 })
-
-module.exports = app;
+module.exports = {app , store };
