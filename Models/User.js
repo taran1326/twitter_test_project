@@ -100,6 +100,8 @@ class User {
                 });
             }
             catch(err) {
+                console.log(err);
+            console.log(username,email,name,password);
                 return reject(err);
             }
         })

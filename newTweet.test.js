@@ -340,6 +340,17 @@ describe('Database test suite' , () => {
     describe('User X Sign In functionality check ', ()=>{
 
 
+        mydata = [
+            {   
+                "name": "Rajat",
+                "username": "Rajat3592",
+                "email": "rajat3592@mail.com",
+                "password": "Rajat3592"
+                
+            }
+        ]
+        tb_user.insertMany(mydata);
+
         //passsing user data without password field
         it('should give an error (500 code) if password missing' , async() => {
             const response1 = await request(app).post('/auth/login')
@@ -390,19 +401,19 @@ describe('Database test suite' , () => {
             res1 = await request(app).post('/auth/login')
                                     .set('Content-type', 'application/json')
                                     .send({
-                                            'loginId':"john1353",
-                                            'password':'John1234'
+                                            'loginId':"Rajat3592",
+                                            'password':'Rajat3592'
                                     }).expect(200);
 
 
             //fetched user from database and matched loginId of input data with username of fetched user
 
-            const fetchUserSignIn = await tb_user.findOne({' loginId' : "john1353" });
-            expect(fetchUserSignIn.username).toEqual("john1353");
+            const fetchUserSignIn = await tb_user.findOne({' loginId' : "Rajat3592" });
+            expect(fetchUserSignIn.username).toEqual("Rajat3592");
             
 
             //fetched password of user from database 
-            const boolAns = await bcrypt.compare('John1234' , fetchUserSignIn.password);
+            const boolAns = await bcrypt.compare('Rajat' , fetchUserSignIn.password);
             expect(boolAns).toBeTruthy();
 
             expect(res1.body).toHaveProperty('message');

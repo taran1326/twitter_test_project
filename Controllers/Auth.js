@@ -15,6 +15,7 @@ authRouter.post('/register', async (req, res) => {
             await User.verifyUsernameAndEmailExists({username, email});
         }
         catch(err) {
+            
             return res.send({
                 status: 401,
                 message: err
@@ -33,6 +34,7 @@ authRouter.post('/register', async (req, res) => {
             })
         }
         catch(err) {
+            
             return res.send({
                 status: 401,
                 message: "Database Error. Please try again",
@@ -41,6 +43,7 @@ authRouter.post('/register', async (req, res) => {
         }
     })
     .catch(err => {
+
         return res.send({
             status: 401,
             message: err
