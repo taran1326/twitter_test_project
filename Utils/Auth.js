@@ -1,11 +1,11 @@
 const validator = require('validator');
 
-function cleanUpAndValidate({name, username, email, phone, password}) {
+function cleanUpAndValidate({name, username,email, phone, password}) {
     return new Promise((resolve, reject) => {
-        if(!(name && username && email && password)) {
-            return reject('Missing parameters');
-        }
-
+        // if(!(name && username&& email && password)) {
+        //     return reject('Missing parameters');
+        // }
+        //working
         if(!validator.isEmail(email)) {
             return reject('Invalid Email');
         }
@@ -17,27 +17,28 @@ function cleanUpAndValidate({name, username, email, phone, password}) {
         if(phone && phone.length !== 10) {
             return reject('Invalid Phone number');
         }
-
+        //working
         if(username.length < 3) {
             return reject('Username is too short');
         }
-
+        //working
         if(username.length > 50) {
             return reject('Username should be at max 50 characters');
         }
-
+        //working
         if(password.length < 6) {
             return reject('Password is too short ');
         }
-
+        //working
         if(password.length > 200) {
             return reject('Password should be at max 200 characters long');
         }
 
+        //working
         if(name.length > 100) {
             return reject('Name should be at max 100 characters long');
         }
-
+        //working
         if(!validator.isAlphanumeric(password)) {
             return reject('Password should be alphanumeric');
         }

@@ -31,11 +31,14 @@ describe('Database test suite' , () => {
 
     
     describe('Check if email has a correct format' , ()=>{
+        afterAll(async () =>{
+            await tb_tweet.deleteMany({});
+            await tb_user.deleteMany({});
+        })
     it('email is not present' , async()=>{
         const data = {
-            "name": "",
+            "name": "goodenough",
             "username": "john12",
-            "email":"",
             "password": "John1234"
         }
         
@@ -68,6 +71,10 @@ describe('Database test suite' , () => {
 
 
     describe('Check if name has a correct format' , ()=>{
+        afterAll(async () =>{
+            await tb_tweet.deleteMany({});
+            await tb_user.deleteMany({});
+        })
         it('name is not present' , async()=>{
             const data = {
                 "name": "",
@@ -100,14 +107,18 @@ describe('Database test suite' , () => {
             expect(response.body).toHaveProperty('message');
 
         });
+
     });
 
 
     describe('Check if username has a correct format' , ()=>{
+        afterAll(async () =>{
+            await tb_tweet.deleteMany({});
+            await tb_user.deleteMany({});
+        })
         it('username is not present' , async()=>{
             const data = {
                 "name": "John",
-                "username": "",
                 "email": "john34@mail.com",
                 "password": "John1234"
             }
@@ -162,10 +173,16 @@ describe('Database test suite' , () => {
             expect(response.body).toHaveProperty('message');
         });
 
+        
+
     });
 
 
     describe('Check if password has a correct format' , ()=>{
+        afterAll(async () =>{
+            await tb_tweet.deleteMany({});
+            await tb_user.deleteMany({});
+        })
 
         // it('password end point not correct')
         it('password is not present' , async()=>{
@@ -173,7 +190,7 @@ describe('Database test suite' , () => {
                 "name": "John",
                 "username": "John123",
                 "email": "john34@mail.com",
-                "password": ""
+
             }
             
             const response = await request(app).post('/auth/register')
