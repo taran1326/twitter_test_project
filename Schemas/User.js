@@ -23,11 +23,11 @@ const userSchema = new Schema({
     phone: {
         type: String,
         required: false
-    },
-    token:{
-        type:String,
-        required: false
     }
+    // token:{
+    //     type:String,
+    //     required: false
+    // }
 })
 
 module.exports = mongoose.model('tb_user', userSchema);

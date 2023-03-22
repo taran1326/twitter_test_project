@@ -62,19 +62,29 @@ const isAuth = async(req, res, next) => {
           return res.send("Token missing").status(401);
       }
       // 2. Check if token is in DB
-      try{
-          const response = await User.verifyTokenExists(token);
+      let jwtResponse;
+        try{
+          const response = await User.verifyTokenExists(token); //response : userDb
+          console.log(response);
           if(!response){
             console.log(12345);
             return res.send("Token invalid").status(401);
           }
-          const jwtResponse = jwt.verify(token, "THISISAPRIVATEKEY");
+          try{
+            jwtResponse = jwt.verify(response.tokens, "THISISAPRIVATEKEY");
+          }
+          catch(err){
+            console.log("HELLO");
+            return res.send("token 1invalid").status(401);
+          }
+          console.log(jwtResponse);
           req.user = jwtResponse;
           console.log(req.user._id);
-      }catch(err){
-          console.log(err);
-          return res.send("Token invalid").status(401);
-      }
+        }
+        catch(err){
+            console.log(err);
+        }
+      
       next();
 }
 

@@ -3,7 +3,7 @@ const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
 
 const UserSchema = require('../Schemas/User');
-const tokenSchema = require('../Schemas/')
+const tokenSchema = require('../Schemas/Tokens')
 class User {
 
     username;
@@ -11,16 +11,16 @@ class User {
     phone;
     name;
     password;
-    token;
+    // token; //change
     _id;
 
-    constructor({username, name, email, password, phone, token, id}) {
+    constructor({username, name, email, password, phone, id}) { //change
         this.email = email;
         this.phone = phone;
         this.password = password;
         this.username = username;
         this.name = name;
-        this.token=token;
+        // this.token=token; //change
         this._id=id;
     }
 
@@ -61,7 +61,8 @@ class User {
     static verifyTokenExists(token) {
         return new Promise(async (resolve, reject) => {
             try {
-                const userDb = await UserSchema.findOne({token: token});
+                const userDb = await tokenSchema.findOne({tokens:token}); //change
+                console.log(userDb);
                 resolve(userDb);
             }
             catch(err) {
@@ -134,7 +135,7 @@ class User {
                     password: this.password,
                     email: this.email,
                     phone: this.phone,
-                    token:this.token
+                    // token:this.token //change
                 }
                 );
 
@@ -150,15 +151,11 @@ class User {
 
     static logoutFromAllDevices(userId) {
         return new Promise(async (resolve, reject) => {
-            const Schema = mongoose.Schema;
-
-            const sessionSchema = new Schema({_id: String}, {strict: false});
-            const SessionModel = mongoose.model('sessions', sessionSchema, 'sessions');
 
             try {
-                const sessionDb = await SessionModel.deleteMany({' .user.userId': userId});
+                const tokenDb = await tokenSchema.deleteMany({'userId': userId});
 
-                resolve(sessionDb);
+                resolve(tokenDb);
             }
             catch(err) {
                 reject(err);

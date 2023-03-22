@@ -8,7 +8,7 @@ const { isAuth } = require('../Utils/Auth');
 tweetsRouter.post('/create-tweet',isAuth, async (req, res) => {
 
     const { title, bodyText } = req.body;
-    console.log(req.user._id);
+    // console.log(req.user._id);
     const userId = req.user._id;
 
     if(!title || !bodyText) {

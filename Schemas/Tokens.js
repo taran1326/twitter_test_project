@@ -3,12 +3,12 @@ const Schema = mongoose.Schema;
 
 
 const tokenSchema = new Schema({
-    userId :{
-        type: String, 
+    userId:{
+        type: Schema.Types.ObjectId,
         required : true
     },
 
-    tokens :{
+    tokens:{
         type : String,
         required : true
     }

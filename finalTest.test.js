@@ -3,6 +3,7 @@ const app = require('./index');
 const db = require('./db');
 const tb_tweet = require('./Schemas/Tweets');
 const tb_user = require('./Schemas/User');
+const tb_tokens = require('./Schemas/Tokens');
 const bcrypt = require('bcrypt');
 const userSchema = require('./Schemas/User');
 
@@ -443,14 +444,21 @@ describe('Database test suite' , () => {
                 email:mydata.email ,
                 username: mydata.username, 
                 name:mydata.name ,
-                _id: dbUser._id
+                _id: dbUser._id,
+                creationTime:new Date()
             }, "THISISAPRIVATEKEY");
 
+            const userObject = new tb_tokens({
+                userId : dbUser._id,
+                tokens: token
+            });
+            tb_tokens.insertMany(userObject);
 
-            dbUser.token = token; 
-            const userToUpdate = new User(dbUser);
+
+            // dbUser.token = token; 
+            // const userToUpdate = new User(dbUser);
             // console.log(userToUpdate);
-            await userSchema.findOneAndUpdate({_id: dbUser._id} , userToUpdate);
+            // await userSchema.findOneAndUpdate({_id: dbUser._id} , userToUpdate);
         });
 
         beforeEach(done => {
@@ -461,19 +469,19 @@ describe('Database test suite' , () => {
 
         afterAll(async() => {
             await tb_tweet.deleteMany({}); 
+            await tb_tokens.deleteMany({});
         })
 
 
         test('user X should be able to create a new tweet' , async() =>{
 
-            const creationDatetime = new Date();
+
 
             const data1 = {
                 'title':'User X', 
                 'bodyText':'Helloworld i am tester 1',
                 'userId':dbUser._id,
-                'creationDatetime':creationDatetime
-
+                'creationDatetime': new Date()
             }
             JSON.stringify(data1)
 
@@ -527,41 +535,49 @@ describe('Database test suite' , () => {
                 email:mydata.email ,
                 username: mydata.username, 
                 name:mydata.name ,
-                _id: dbUser._id
+                _id: dbUser._id, 
+                creationTime: new Date()
             }, "THISISAPRIVATEKEY");
 
+            const userObject = new tb_tokens({
+                userId : dbUser._id,
+                tokens: token
+            });
+            tb_tokens.insertMany(userObject);
 
-            dbUser.token = token; 
-            const userToUpdate = new User(dbUser);
+
+            // dbUser.token = token; 
+            // const userToUpdate = new User(dbUser);
             // console.log(userToUpdate);
-            await userSchema.findOneAndUpdate({_id: dbUser._id} , userToUpdate);
+            // await userSchema.findOneAndUpdate({_id: dbUser._id} , userToUpdate);
         });
 
 
         afterAll(async() => {
-            await tb_tweet.deleteMany({}); 
+            await tb_tweet.deleteMany({});
+            await tb_tokens.deleteMany({});
         })
 
 
         test('User X should be able to read his tweets' , async()=>{
-            const creationDatetime = new Date();
+            // const creationDatetime = new Date();
 
             const data1 = {
                 'title':'User X', 
                 'bodyText':'Helloworld i am tester 1',
                 'userId':dbUser._id,
-                'creationDatetime':creationDatetime
+                'creationDatetime': new Date()
 
             }
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            const creationDatetime1 = new Date();
+            // const creationDatetime1 = new Date();
 
             const data2 = {
                 'title':'User Z', 
                 'bodyText':'Helloworld i am tester 1',
                 'userId':dbUser._id,
-                'creationDatetime':creationDatetime1
+                'creationDatetime':new Date()
 
             }
 
@@ -632,26 +648,41 @@ describe('Database test suite' , () => {
                 email:mydata.email ,
                 username: mydata.username, 
                 name:mydata.name ,
-                _id: dbUser._id
+                _id: dbUser._id,
+                creationTime:new Date()
             }, "THISISAPRIVATEKEY");
+
+
+            const userObject = new tb_tokens({
+                userId : dbUser._id,
+                tokens: token
+            });
+            tb_tokens.insertMany(userObject);
 
 
             token1 = jwt.sign({
                 email:mydata1.email ,
                 username: mydata1.username, 
                 name:mydata1.name ,
-                _id: dbUser1._id
+                _id: dbUser1._id, 
+                creationTime: new Date()
             }, "THISISAPRIVATEKEY");
 
+            const userObject1 = new tb_tokens({
+                userId : dbUser1._id,
+                tokens: token1
+            });
+            tb_tokens.insertMany(userObject1);
 
 
-            dbUser.token = token; 
-            dbUser1.token = token1;
-            const userToUpdate = new User(dbUser);
-            const userToUpdate1 = new User(dbUser1);
+
+            // dbUser.token = token; 
+            // dbUser1.token = token1;
+            // const userToUpdate = new User(dbUser);
+            // const userToUpdate1 = new User(dbUser1);
             // console.log(userToUpdate);
-            await userSchema.findOneAndUpdate({_id: dbUser._id} , userToUpdate);
-            await userSchema.findOneAndUpdate({_id: dbUser1._id} , userToUpdate1);
+            // await userSchema.findOneAndUpdate({_id: dbUser._id} , userToUpdate);
+            // await userSchema.findOneAndUpdate({_id: dbUser1._id} , userToUpdate1);
         });
 
 
@@ -703,8 +734,84 @@ describe('Database test suite' , () => {
 
 
     describe('Logout' , ()=> {
-
+            
+        beforeAll(async()=>{
+            await tb_tokens.deleteMany({}); 
+            await tb_user.deleteMany({});
+            await tb_tweet.deleteMany({});
+        })
         let token , dbUser;
+        beforeAll(async()=> {
+            const passwordstring = "John1234";
+            const hashedPassword = await bcrypt.hash( passwordstring, 1);
+            console.log(hashedPassword);
+            const mydata = new userSchema(
+                {   
+                    "username": "john1234",
+                    "email": "john1234@mail.com",
+                    "name": "John",
+                    "password": hashedPassword
+                }
+            );
+
+            await tb_user.insertMany(mydata);
+            
+
+            // dbUser = await tb_user.findOne({username:});
+            dbUser = await tb_user.findOne({username:'john1234'});
+            
+
+            // console.log(dbUser);
+            token = jwt.sign({
+                email:mydata.email ,
+                username: mydata.username, 
+                name:mydata.name ,
+                _id: dbUser._id,
+                creationTime: new Date()
+            }, "THISISAPRIVATEKEY");
+
+            const userObject = new tb_tokens({
+                userId : dbUser._id,
+                tokens: token
+            });
+            tb_tokens.insertMany(userObject);
+            // console.log(userObject);
+
+
+
+            // const userToUpdate = new User(dbUser);
+            // console.log(userToUpdate);
+            // await userSchema.findOneAndUpdate({_id: dbUser._id} , userToUpdate);
+
+        })
+
+
+        afterAll(async() => {
+            await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
+        })
+        it('logout test' , async()=>{
+            const response = await request(app).post('/auth/logout')
+                                               .set('Authorization', token)
+                                               .expect(200);
+            console.log(response.headers);
+            // const fetchedUser = await tb_user.findById({_id:dbUser._id});
+            // expect(fetchedUser.token).toBeNull();
+            const numberOfTokens = await tb_tokens.countDocuments();
+            expect(numberOfTokens).toBe(0);
+        })
+
+    })
+
+
+    describe('Logout from all devices' , ()=>{
+
+        beforeAll(async()=>{
+            await tb_tokens.deleteMany({}); 
+            await tb_user.deleteMany({});
+            await tb_tweet.deleteMany({});
+        })
+        let token , dbUser , token2;
         beforeAll(async()=> {
             const passwordstring = "John1234";
             const hashedPassword = await bcrypt.hash( passwordstring, 1);
@@ -730,29 +837,42 @@ describe('Database test suite' , () => {
                 email:mydata.email ,
                 username: mydata.username, 
                 name:mydata.name ,
-                _id: dbUser._id
+                _id: dbUser._id,
+                creationTime: new Date()
             }, "THISISAPRIVATEKEY");
 
+            const userObject = new tb_tokens({
+                userId : dbUser._id,
+                tokens: token
+            });
+            tb_tokens.insertMany(userObject);
 
-            dbUser.token = token; 
-            const userToUpdate = new User(dbUser);
-            // console.log(userToUpdate);
-            await userSchema.findOneAndUpdate({_id: dbUser._id} , userToUpdate);
 
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+            token2 = jwt.sign({
+                email:mydata.email ,
+                username: mydata.username, 
+                name:mydata.name ,
+                _id: dbUser._id, 
+                creationTime : new Date()
+            }, "THISISAPRIVATEKEY");
+
+            const userObject1 = new tb_tokens({
+                userId : dbUser._id,
+                tokens: token2
+            });
+            tb_tokens.insertMany(userObject1);
+
+        });
+        test('Should log out from all devices' , async()=>{
+            const response = await request(app).post('/auth/logout_from_all_devices')
+                                                .set('Authorization' , token)
+
+            console.log(response);
+
+            const numberOfDocs = await tb_tokens.countDocuments();
+            expect(numberOfDocs).toBe(0);
         })
-
-
-        afterAll(async() => {
-            await tb_user.deleteMany({});
-        })
-        it('logout test' , async()=>{
-            const response = await request(app).post('/auth/logout')
-                                               .set('Authorization', token)
-                                               .expect(200);
-            console.log(response.headers);
-            const fetchedUser = await tb_user.findById({_id:dbUser._id});
-            expect(fetchedUser.token).toBeNull();
-        })
-
     })
 });

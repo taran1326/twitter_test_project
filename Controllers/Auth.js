@@ -3,9 +3,10 @@ const jwt = require("jsonwebtoken");
 
 const { cleanUpAndValidate, isAuth } = require('../Utils/Auth');
 const User  = require('../Models/User');
+const tb_tokens = require('../Schemas/Tokens');
 
 const authRouter = express.Router();
-
+const tokenSchema = require('../Schemas/Tokens')
 authRouter.post('/register', async (req, res) => {
 
     const { username, email, name, password, phone } = req.body;
@@ -62,25 +63,24 @@ authRouter.post('/login', async (req, res) => {
 
     try {
         const dbUser = await User.loginUser({loginId, password});
-        
-        // req.session.isAuth = true;
-        // req.session.user = {
-        //     email: dbUser.email,
-        //     username: dbUser.username,
-        //     name: dbUser.name,
-        //     userId: dbUser._id
-        // }
-        console.log(dbUser);
+
+        // console.log(dbUser);
         const token = jwt.sign({
             email: dbUser.email,
             username: dbUser.username,
             name: dbUser.name,
-            _id: dbUser._id
+            _id: dbUser._id,
+            creationTime : new Date()
         }, "THISISAPRIVATEKEY", {expiresIn:'1h'});
-        dbUser.token=token;
-        const userToUpdate = new User(dbUser);
-        console.log(dbUser);
-        userToUpdate.updateUser(dbUser._id);
+
+
+        const userObject = new tb_tokens({
+            userId : dbUser._id,
+            tokens: token
+        });
+        tb_tokens.insertMany(userObject);
+        // console.log(userObject);
+
 
         return res.send({
             status: 200,
@@ -99,13 +99,20 @@ authRouter.post('/login', async (req, res) => {
 
 authRouter.post('/logout', isAuth, async (req, res) => {
 
-    console.log(1223);
+    // console.log(1223);
     // const userData = req.session.user;
     const token = req.headers.authorization;
     const dbUser = await User.verifyTokenExists(token);
-    dbUser.token=null;
-    const userToUpdate = new User(dbUser);
-    userToUpdate.updateUser(dbUser._id);
+    // dbUser.token=null; //change
+
+    tb_tokens.findOneAndDelete({tokens : token } , (err)=>{
+        if(err){
+            console.log(err);
+        }
+    });
+
+    // const userToUpdate = new User(dbUser); //change
+    // userToUpdate.updateUser(dbUser._id); //change
     return res.send({
         status: 200,
         message: "Logout successful",
@@ -113,17 +120,27 @@ authRouter.post('/logout', isAuth, async (req, res) => {
     })
 })
 
-authRouter.post('/logout_from_all_devices', async (req, res) => {
+authRouter.post('/logout_from_all_devices', isAuth ,async (req, res) => {
 
-    const userId = req.session.user.userId;
+    const token = req.headers.authorization;
+    const aboutUser = await tokenSchema.findOne({tokens : token});
+    const userID = aboutUser.userId;
+
+    const tokenDb = await tb_tokens.deleteMany({userId : userID});
+
+
+    // const token = req.header.authorization;
+    // const jwtResponse = jwt.verify(token, "THISISAPRIVATEKEY");
+    // req.user = jwtResponse;
+
+    // const userId = req.user._id;
 
     try {
-        const sessionDb = await User.logoutFromAllDevices(userId);
-
+    //     const tokenDb = await tokenSchema.remove({'userId': userId});
         return res.send({
             status: 200,
             message: "Logged out from all devices",
-            data: sessionDb
+            data: tokenDb
         })
     }
     catch(err) {
