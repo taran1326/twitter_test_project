@@ -62,7 +62,7 @@ class User {
         return new Promise(async (resolve, reject) => {
             try {
                 const userDb = await tokenSchema.findOne({tokens:token}); //change
-                console.log(userDb);
+                // console.log(userDb);
                 resolve(userDb);
             }
             catch(err) {
@@ -142,7 +142,7 @@ class User {
                 return resolve();
             }
             catch(err) {
-                console.log(err);
+                // console.log(err);
            
                 return reject(err);
             }

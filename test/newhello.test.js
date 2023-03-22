@@ -1,12 +1,14 @@
 const request = require('supertest');
-const {app , store} = require('./index');
-const db = require('./db');
-const {connect} = require('./db');
-const tb_tweet = require('./Schemas/Tweets');
-const tb_user = require('./Schemas/User');
+const {app , store} = require('../index');
+const db = require('../db');
+const {connect} = require('../db');
+const tb_tweet = require('../Schemas/Tweets');
+const tb_user= require('../Schemas/User');
 const bcrypt = require('bcrypt');
+const mockSession = require('mock-session')
 
 
+const userSchema = require('../Schemas/User')
 
 //tweet check same as sign up just check the ß_id property response
 
@@ -26,7 +28,6 @@ describe('Database test suite' , () => {
     
     describe('Check if email has a correct format' , ()=>{
         afterAll(async () =>{
-            await tb_tweet.deleteMany({});
             await tb_user.deleteMany({});
         })
         it('email is not present' , async()=>{
@@ -66,7 +67,6 @@ describe('Database test suite' , () => {
 
     describe('Check if name has a correct format' , ()=>{
         afterAll(async () =>{
-            await tb_tweet.deleteMany({});
             await tb_user.deleteMany({});
         })
         it('name is not present' , async()=>{
@@ -106,7 +106,6 @@ describe('Database test suite' , () => {
 
     describe('Check if username has a correct format' , ()=>{
         afterAll(async () =>{
-            await tb_tweet.deleteMany({});
             await tb_user.deleteMany({});
         })
         it('username is not present' , async()=>{
@@ -173,7 +172,6 @@ describe('Database test suite' , () => {
 
     describe('Check if password has a correct format' , ()=>{
         afterAll(async () =>{
-            await tb_tweet.deleteMany({});
             await tb_user.deleteMany({});
         })
 
@@ -338,6 +336,11 @@ describe('Database test suite' , () => {
 
 
     describe('User X Sign In functionality check ', ()=>{
+        afterAll(async()=>{
+            tb_user.deleteMany({});
+            tb_tweet.deleteMany({});
+        })
+
 
 
         //passsing user data without password field
@@ -387,22 +390,48 @@ describe('Database test suite' , () => {
 
 
         it('User X should be able to sign in with valid credentials' , async()=>{
+            const passwordstring = "Rajat3592";
+            const hashedPassword = await bcrypt.hash( passwordstring, 1);
+            console.log(hashedPassword);
+            const mydata = new userSchema(
+                {   
+                    "username": "Rajat3592",
+                    "email": "rajat3592@mail.com",
+                    "name": "Rajat",
+                    "password": hashedPassword
+    
+                }
+            );
+    
+            mydata.save();
+
+
+            
             res1 = await request(app).post('/auth/login')
                                     .set('Content-type', 'application/json')
                                     .send({
-                                            'loginId':"john1353",
-                                            'password':'John1234'
+                                            'loginId':"Rajat3592",
+                                            'password':"Rajat3592"
                                     }).expect(200);
+
+
+            console.log(res1.body.data._id);
 
 
             //fetched user from database and matched loginId of input data with username of fetched user
 
-            const fetchUserSignIn = await tb_user.findOne({' loginId' : "john1353" });
-            expect(fetchUserSignIn.username).toEqual("john1353");
+            const fetchUserSignIn = await tb_user.findOne({'username' : "Rajat3592" });
+            expect(fetchUserSignIn.username).toEqual("Rajat3592");
+
             
 
-            //fetched password of user from database 
-            const boolAns = await bcrypt.compare('John1234' , fetchUserSignIn.password);
+            // const ourPassword = await bcrypt.hash("Rajat3592" , 1);
+            // console.log(ourPassword);
+            // console.log(mydata.password);
+            //fetched password of user from database
+            console.log(passwordstring);
+            console.log(fetchUserSignIn.password);
+            const boolAns = await bcrypt.compare(passwordstring , fetchUserSignIn.password);
             expect(boolAns).toBeTruthy();
 
             expect(res1.body).toHaveProperty('message');
@@ -412,6 +441,8 @@ describe('Database test suite' , () => {
             
 
         })
+
+
         
 
 
@@ -426,13 +457,34 @@ describe('Database test suite' , () => {
         //       done();
         //     }, 2000); // delay for 2 seconds
         // });
+        const passwordstring = "Rajat3592";
+        var hashedPassword;
+        var id , req;
+        beforeAll(async()=>{
+            
+            hashedPassword = await bcrypt.hash( passwordstring, 1);
+            console.log(hashedPassword);
+            const mydata = new userSchema(
+                {   
+                    "username": "Rajat3592",
+                    "email": "rajat3592@mail.com",
+                    "name": "Rajat",
+                    "password": hashedPassword
+    
+                }
+            );
+
+            id = tb_user.findOne({"name":"Rajat"})._id;
+
+
+        })
 
         test('should give an error if bodyText is missing' , async()=>{
             const creationDatetime = new Date();
 
             const data1 = {
                 'title':'User X', 
-                'userId':res1.body.data._id,
+                'userId': id,
                 'creationDatetime':creationDatetime
 
             }
@@ -451,7 +503,7 @@ describe('Database test suite' , () => {
 
             const data1 = {
                 'bodyText' : 'hello world I am tester testing', 
-                'userId':res1.body.data._id,
+                'userId':id,
                 'creationDatetime':creationDatetime
 
             }
@@ -473,7 +525,7 @@ describe('Database test suite' , () => {
             const data1 = {
                 'title':'User X', 
                 'bodyText':'Helloworld i am tester 1',
-                'userId':res1.body.data._id,
+                'userId':id,
                 'creationDatetime':creationDatetime
 
             }
@@ -616,7 +668,7 @@ describe('Database test suite' , () => {
 
         
                                     
-        // console.log(console.dir(res.headers))
+//         // console.log(console.dir(res.headers))
 
     
     

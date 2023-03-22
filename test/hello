@@ -1,0 +1,164 @@
+const request = require('supertest');
+const {app , store} = require('./index');
+const db = require('./db');
+const {connect} = require('./db');
+const tb_tweet = require('./Schemas/Tweets');
+const tb_user = require('./Schemas/User');
+const bcrypt = require('bcrypt');
+const userSchema = require('./Schemas/User');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+let mockSession = require('mock-session');
+
+
+
+// exports.create = function(req, res) {         
+//     if(req.session.count == 1) { // true                      
+//         //do something                
+//         res.sendStatus(200);                    
+//     }
+// }
+describe('Create tweet', () => {
+    it('should create a new tweet', async () => {
+      // Manually create a session and set the session ID in a cookie or header
+      const sessionData = {
+        "cookie": {
+          "originalMaxAge": 86400000,
+          "expires": "2023-03-18T04:22:21.819Z",
+          "httpOnly": true,
+          "path": "/"
+        },
+        "isAuth": true,
+        "user": {
+          "email": "user@example.com",
+          "username": "user123",
+          "name": "UserName",
+          "userId": "1234567890abcdef"
+        },
+        "createdAt": "2023-03-17T04:22:21.819Z",
+        "updatedAt": "2023-03-17T04:27:09.642Z"
+      }
+      const session1 = await store.createSession(sessionData);
+      
+      const sessionId = session1.id;
+      const sessionCookie = `connect.sid=${sessionId}`;
+      const creationDatetime = new Date();
+      // Send a request to create a new tweet with the session cookie or header
+      const res = await request(app)
+        .post('/tweet/create-tweet')
+        .set('Cookie', sessionCookie)
+        .send({
+            'title':'User X', 
+            'bodyText':'Helloworld i am tester 1',
+            "userId":"641431ec7669fb836660e2c0",
+            'creationDatetime':creationDatetime
+        });
+  
+      // Assert that the response contains the new tweet
+      expect(res.status).toBe(200);
+      expect(res.body.data.bodyText).toBe('Helloworld i am tester 1');
+    });
+  });
+  
+let response;
+    describe('User X Create Tweeet functionality' , ()=>{
+
+        // beforeEach(done => {
+        //     setTimeout(() => {
+        //       done();
+        //     }, 2000); // delay for 2 seconds
+        // });
+        const passwordstring = "Rajat3592";
+        var hashedPassword;
+        var id , req;
+        var cookie;
+        beforeAll(async()=>{
+            
+            hashedPassword = await bcrypt.hash( passwordstring, 1);
+            console.log(hashedPassword);
+            const mydata = new userSchema(
+                {   
+                    "username": "Rajat3592",
+                    "email": "rajat3592@mail.com",
+                    "name": "Rajat",
+                    "password": hashedPassword
+    
+                }
+            );
+
+            id = tb_user.findOne({"name":"Rajat"})._id;
+            cookie = mockSession('connect', 'abcdefg', {"userId" : id , isAuth : true });  
+            cookie.isAuth = true;
+            console.dir(cookie);
+
+        })
+
+        test('should give an error if bodyText is missing' , async()=>{
+            const creationDatetime = new Date();
+
+            const data1 = {
+                'title':'User X', 
+                'userId': id,
+                'creationDatetime':creationDatetime
+
+            }
+
+            const response = await request(app).post('/tweet/create-tweet')
+                                            //    .set(isAuth , true)
+                                                .set('Cookie' , [cookie] )
+                                                .send(data1);
+
+            expect(response.body.status).toBe(500);
+
+        })
+
+        test('should give an error if title is missing' , async()=>{
+            const creationDatetime = new Date();
+
+            const data1 = {
+                'bodyText' : 'hello world I am tester testing', 
+                'userId':id ,
+                'creationDatetime':creationDatetime
+
+            }
+
+            const response = await request(app).post('/tweet/create-tweet')
+                                            //    .set(isAuth , true)
+                                                .set('Cookie' , [cookie] )
+                                                .send(data1);
+
+            expect(response.body.status).toBe(500);
+            
+        })
+
+
+        test('user X should be able to create a new tweet' , async() =>{
+
+            const creationDatetime = new Date();
+
+            const data1 = {
+                'title':'User X', 
+                'bodyText':'Helloworld i am tester 1',
+                'userId':id,
+                'creationDatetime':creationDatetime
+
+            }
+            JSON.stringify(data1)
+
+            response = await request(app).post('/tweet/create-tweet')
+                                            //    .set(isAuth , true)
+                                                .set('Cookie' , [cookie] )
+                                                .send(data1);
+
+
+            const lenDatabaseTweetsX = await tb_tweet.countDocuments();
+            const result = await tb_tweet.findOne({'title' : 'User X'});
+            expect(lenDatabaseTweetsX).toBe(1); //on signing up length of collection should increase by one
+
+            expect(result.title).toEqual(data1.title); //fetching data from database and matching with input data
+            expect(result.bodyText).toEqual(data1.bodyText);
+            expect(response.statusCode).toBe(200);
+            expect(response.body.data).toHaveProperty('userId');
+        
+        });
+    })

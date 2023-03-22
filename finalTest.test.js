@@ -248,7 +248,7 @@ describe('Database test suite' , () => {
             const res = await request(app).post('/auth/register')
                                     .set('Content-type', 'application/json')
                                     .send(data) 
-            console.log(res.body.data);
+            // console.log(res.body.data);
             expect(res.statusCode).toBe(200);
             expect(res.body.data).toHaveProperty('username');
             expect(res.body.data).toHaveProperty('name');
@@ -367,7 +367,7 @@ describe('Database test suite' , () => {
 
             const passwordstring = "John1234";
             const hashedPassword = await bcrypt.hash( passwordstring, 1);
-            console.log(hashedPassword);
+            // console.log(hashedPassword);
             const mydata = new userSchema(
                 {   
                     "username": "john1353",
@@ -405,7 +405,7 @@ describe('Database test suite' , () => {
             expect(responseLogIn.body.data).toHaveProperty('_id');
             expect(responseLogIn.body.data).toHaveProperty('username');
             
-            console.log(responseLogIn.headers);
+            // console.log(responseLogIn.headers);
         })
         
 
@@ -422,7 +422,7 @@ describe('Database test suite' , () => {
         beforeAll(async()=> {
             const passwordstring = "TaranIsTheOne";
             const hashedPassword = await bcrypt.hash( passwordstring, 1);
-            console.log(hashedPassword);
+            // console.log(hashedPassword);
             const mydata = new userSchema(
                 {   
                     "username": "TaranIsTheOne",
@@ -512,7 +512,7 @@ describe('Database test suite' , () => {
         beforeAll(async()=> {
             const passwordstring = "testpassword2";
             const hashedPassword = await bcrypt.hash( passwordstring, 1);
-            console.log(hashedPassword);
+            // console.log(hashedPassword);
             const mydata = new userSchema(
                 {   
                     "username": "testuser2",
@@ -593,8 +593,8 @@ describe('Database test suite' , () => {
             var check = (response.body.data[0].creationDatetime) > (response.body.data[1].creationDatetime);
             expect(check).toBeTruthy();
 
-            console.log(ObjectId(response.body.data[0].userId));
-            console.log(tweetData1.userId); 
+            // console.log(ObjectId(response.body.data[0].userId));
+            // console.log(tweetData1.userId); 
             expect(ObjectId(response.body.data[0].userId)).toEqual(tweetData1.userId);
             expect(ObjectId(response.body.data[1].userId)).toEqual(tweetData.userId);
 
@@ -744,7 +744,7 @@ describe('Database test suite' , () => {
         beforeAll(async()=> {
             const passwordstring = "John1234";
             const hashedPassword = await bcrypt.hash( passwordstring, 1);
-            console.log(hashedPassword);
+            // console.log(hashedPassword);
             const mydata = new userSchema(
                 {   
                     "username": "john1234",
@@ -794,7 +794,7 @@ describe('Database test suite' , () => {
             const response = await request(app).post('/auth/logout')
                                                .set('Authorization', token)
                                                .expect(200);
-            console.log(response.headers);
+            // console.log(response.headers);
             // const fetchedUser = await tb_user.findById({_id:dbUser._id});
             // expect(fetchedUser.token).toBeNull();
             const numberOfTokens = await tb_tokens.countDocuments();
@@ -815,7 +815,7 @@ describe('Database test suite' , () => {
         beforeAll(async()=> {
             const passwordstring = "John1234";
             const hashedPassword = await bcrypt.hash( passwordstring, 1);
-            console.log(hashedPassword);
+            // console.log(hashedPassword);
             const mydata = new userSchema(
                 {   
                     "username": "john1234",
@@ -869,7 +869,7 @@ describe('Database test suite' , () => {
             const response = await request(app).post('/auth/logout_from_all_devices')
                                                 .set('Authorization' , token)
 
-            console.log(response);
+            // console.log(response);
 
             const numberOfDocs = await tb_tokens.countDocuments();
             expect(numberOfDocs).toBe(0);

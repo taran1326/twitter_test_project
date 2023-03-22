@@ -1,10 +1,16 @@
 const request = require('supertest');
-const {app , store} = require('./index');
-const db = require('./db');
-const {connect} = require('./db');
-const tb_tweet = require('./Schemas/Tweets');
-const tb_user = require('./Schemas/User');
+const {app , store} = require('../index');
+const db = require('../db');
+const {connect} = require('../db');
+const tb_tweet = require('../Schemas/Tweets');
+const tb_user = require('../Schemas/User');
 const bcrypt = require('bcrypt');
+
+
+
+
+
+
 
 
 
@@ -12,9 +18,9 @@ const bcrypt = require('bcrypt');
 
 describe('Database test suite' , () => {
     // connecting to database before each test and setting up collections.
-    beforeAll( async () => {
-        await connect();
-    })
+    // beforeAll( async () => {
+    //     await connect();
+    // })
 
     //clearing up all the documents in collections (data in database)
     beforeAll(async () => {
@@ -25,52 +31,46 @@ describe('Database test suite' , () => {
 
     
     describe('Check if email has a correct format' , ()=>{
-        afterAll(async () =>{
-            await tb_tweet.deleteMany({});
-            await tb_user.deleteMany({});
-        })
-        it('email is not present' , async()=>{
-            const data = {
-                "name": "goodenough",
-                "username": "john12",
-                "password": "John1234"
-            }
-            
-            const response = await request(app).post('/auth/register')
-                                                .set('Content-type' , 'application/json')
-                                                .send(data);
-            // console.log(JSON.stringify(response.body));
-            expect(response.body.status).toBe(401);
-            expect(response.body).toHaveProperty('message');
+    it('email is not present' , async()=>{
+        const data = {
+            "name": "",
+            "username": "john12",
+            "email":"",
+            "password": "John1234"
+        }
+        
+        const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
 
-        });
-        it('email has wrong format (missing @ and .)' , async()=>{
-            const data = {
-                "name": "John",
-                "username": "john12",
-                "email": "john34mailcom",
-                "password": "John1234"
-            }
-            
-            const response = await request(app).post('/auth/register')
-                                                .set('Content-type' , 'application/json')
-                                                .send(data);
-            // console.log(JSON.stringify(response.body));
-            expect(response.body.status).toBe(401);
-            expect(response.body).toHaveProperty('message');
+    });
+    it('email has wrong format (missing @ and .)' , async()=>{
+        const data = {
+            "name": "John",
+            "username": "john12",
+            "email": "john34mailcom",
+            "password": "John1234"
+        }
+        
+        const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+        console.log(JSON.stringify(response.body));
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
 
-        });
+    });
 
     });
 
 
     describe('Check if name has a correct format' , ()=>{
-        afterAll(async () =>{
-            await tb_tweet.deleteMany({});
-            await tb_user.deleteMany({});
-        })
         it('name is not present' , async()=>{
             const data = {
+                "name": "",
                 "username": "john124",
                 "email": "john34@mail.com",
                 "password": "John1234"
@@ -79,7 +79,7 @@ describe('Database test suite' , () => {
             const response = await request(app).post('/auth/register')
                                                 .set('Content-type' , 'application/json')
                                                 .send(data);
-            // console.log(JSON.stringify(response.body));
+            console.log(JSON.stringify(response.body));
             expect(response.body.status).toBe(401);
             expect(response.body).toHaveProperty('message');
 
@@ -95,31 +95,27 @@ describe('Database test suite' , () => {
             const response = await request(app).post('/auth/register')
                                                 .set('Content-type' , 'application/json')
                                                 .send(data);
-            // console.log(JSON.stringify(response.body));
+            console.log(JSON.stringify(response.body));
             expect(response.body.status).toBe(401);
             expect(response.body).toHaveProperty('message');
 
         });
-
     });
 
 
     describe('Check if username has a correct format' , ()=>{
-        afterAll(async () =>{
-            await tb_tweet.deleteMany({});
-            await tb_user.deleteMany({});
-        })
         it('username is not present' , async()=>{
             const data = {
                 "name": "John",
-                "email": "harshit@mail.com",
+                "username": "",
+                "email": "john34@mail.com",
                 "password": "John1234"
             }
             
             const response = await request(app).post('/auth/register')
                                             .set('Content-type' , 'application/json')
                                             .send(data);
-            // console.log(JSON.stringify(response.body));
+            console.log(JSON.stringify(response.body));
             expect(response.body.status).toBe(401 );
             expect(response.body).toHaveProperty('message' );
 
@@ -145,7 +141,7 @@ describe('Database test suite' , () => {
             const response = await request(app).post('/auth/register')
                                             .set('Content-type' , 'application/json')
                                             .send(data);
-            // console.log(JSON.stringify(response.body));
+            console.log(JSON.stringify(response.body));
             expect(response.body.status).toBe(401);
             expect(response.body).toHaveProperty('message');
 
@@ -161,21 +157,15 @@ describe('Database test suite' , () => {
             const response = await request(app).post('/auth/register')
                                             .set('Content-type' , 'application/json')
                                             .send(data);
-            // console.log(JSON.stringify(response.body));
+            console.log(JSON.stringify(response.body));
             expect(response.body.status).toBe(401);
             expect(response.body).toHaveProperty('message');
         });
-
-        
 
     });
 
 
     describe('Check if password has a correct format' , ()=>{
-        afterAll(async () =>{
-            await tb_tweet.deleteMany({});
-            await tb_user.deleteMany({});
-        })
 
         // it('password end point not correct')
         it('password is not present' , async()=>{
@@ -183,13 +173,13 @@ describe('Database test suite' , () => {
                 "name": "John",
                 "username": "John123",
                 "email": "john34@mail.com",
-
+                "password": ""
             }
             
             const response = await request(app).post('/auth/register')
                                             .set('Content-type' , 'application/json')
                                             .send(data);
-            // console.log(JSON.stringify(response.body));
+            console.log(JSON.stringify(response.body));
             expect(response.body.status).toBe(401);
             expect(response.body).toHaveProperty('message');
 
@@ -206,7 +196,7 @@ describe('Database test suite' , () => {
             const response = await request(app).post('/auth/register')
                                             .set('Content-type' , 'application/json')
                                             .send(data);
-            // console.log(JSON.stringify(response.body));
+            console.log(JSON.stringify(response.body));
             expect(response.body.status).toBe(401);
             expect(response.body).toHaveProperty('message');
 
@@ -222,7 +212,7 @@ describe('Database test suite' , () => {
             const response = await request(app).post('/auth/register')
                                             .set('Content-type' , 'application/json')
                                             .send(data);
-            // console.log(JSON.stringify(response.body));
+            console.log(JSON.stringify(response.body));
             expect(response.body.status).toBe(401);
             expect(response.body).toHaveProperty('message');
 
@@ -238,7 +228,7 @@ describe('Database test suite' , () => {
             const response = await request(app).post('/auth/register')
                                             .set('Content-type' , 'application/json')
                                             .send(data);
-            // console.log(JSON.stringify(response.body));
+            console.log(JSON.stringify(response.body));
             expect(response.body.status).toBe(401);
             expect(response.body).toHaveProperty('message');
 
@@ -251,7 +241,8 @@ describe('Database test suite' , () => {
 
 
 
-    // we are clearing the collection containing (old) tweets and users for next set of tests.
+
+
     beforeAll(async () =>{
         await tb_tweet.deleteMany({});
         await tb_user.deleteMany({});
@@ -265,14 +256,14 @@ describe('Database test suite' , () => {
             "email": "john3152@mail.com",
             "password": "John1234"
         }
-        //we are checking if on sending a request we are gettogn adequate response or not.
-        test('User X should be able to register and login if credentials are valid , (response check)' , async()=>{
-
-            jest.setTimeout(10000);
+        
+        test('User X should be able to register and login if credentials are valid' , async()=>{
             res = await request(app).post('/auth/register')
                                     .set('Content-type', 'application/json')
                                     .send(data) 
-            
+            console.dir(res.body.data);
+        
+            console.log(res.body.data);
             expect(res.statusCode).toBe(200);
             expect(res.body.data).toHaveProperty('username');
             expect(res.body.data).toHaveProperty('name');
@@ -283,13 +274,12 @@ describe('Database test suite' , () => {
             
         });
 
-        //test : - 
-        //length of collection should increase on signing up new user 
-        //the user credentials should match in inout and in database
-
-        it('finding user in database (database check)' , async()=>{
+        it('if user X signs up length of collection should increase' , async()=>{
             const num = await tb_user.countDocuments();
             expect(num).toBe(1);
+
+        })
+        it('finding user in database' , async()=>{
             
             const result = await tb_user.findOne({'name':'John'});
             expect(result.name).toEqual(data.name);
@@ -301,7 +291,7 @@ describe('Database test suite' , () => {
             expect(isMatch).toBe(true);
         }) 
 
-        //we are passing the data with same email.
+
         it('should give an error if the user exists (same email)' , async() => {
             const data = {
                 "name": "John",
@@ -315,7 +305,7 @@ describe('Database test suite' , () => {
                                     
             expect(response.body.status).toBe(401);
         })
-        //we are passing the data with same username
+
         it('should give an error if the user exists (same username)' , async() => {
 
             const data = {
@@ -330,28 +320,12 @@ describe('Database test suite' , () => {
                                     
             expect(response.body.status).toBe(401);
         })
-
-        tb_user.deleteOne({"name":"John"});
     });
 
 
 
 
     describe('User X Sign In functionality check ', ()=>{
-
-
-        mydata = [
-            {   
-                "name": "Rajat",
-                "username": "Rajat3592",
-                "email": "rajat3592@mail.com",
-                "password": "Rajat3592"
-                
-            }
-        ]
-        tb_user.insertMany(mydata);
-
-        //passsing user data without password field
         it('should give an error (500 code) if password missing' , async() => {
             const response1 = await request(app).post('/auth/login')
                                     .set('Content-type', 'application/json')
@@ -360,8 +334,6 @@ describe('Database test suite' , () => {
                                     })
             expect(response1.body.status).toBe(500);
         })
-
-        //passing userdata without loginID field
         it('should give an error (500 code) if loginID missing' , async() => {
             const errorSignInLoginID = await request(app).post('/auth/login')
                                     .set('Content-type', 'application/json')
@@ -371,7 +343,7 @@ describe('Database test suite' , () => {
             expect(errorSignInLoginID.body.status).toBe(500);
 
         })
-        //passing user data which was not registered before
+
         it('should give an error (404 code) if user has not registered before' , async() => {
             const errorNoUserFound = await request(app).post('/auth/login')
                                     .set('Content-type', 'application/json')
@@ -401,19 +373,20 @@ describe('Database test suite' , () => {
             res1 = await request(app).post('/auth/login')
                                     .set('Content-type', 'application/json')
                                     .send({
-                                            'loginId':"Rajat3592",
-                                            'password':'Rajat3592'
+                                            'loginId':"john1353",
+                                            'password':'John1234'
                                     }).expect(200);
 
+            console.log(res1.body);
 
             //fetched user from database and matched loginId of input data with username of fetched user
 
-            const fetchUserSignIn = await tb_user.findOne({' loginId' : "Rajat3592" });
-            expect(fetchUserSignIn.username).toEqual("Rajat3592");
+            const fetchUserSignIn = await tb_user.findOne({'loginId':"john1353" });
+            expect(fetchUserSignIn.username).toEqual("john1353");
             
 
             //fetched password of user from database 
-            const boolAns = await bcrypt.compare('Rajat' , fetchUserSignIn.password);
+            const boolAns = await bcrypt.compare('John1234' , fetchUserSignIn.password);
             expect(boolAns).toBeTruthy();
 
             expect(res1.body).toHaveProperty('message');
@@ -421,7 +394,7 @@ describe('Database test suite' , () => {
             expect(res1.body.data).toHaveProperty('_id');
             expect(res1.body.data).toHaveProperty('username');
             
-
+            console.log(res1.headers);
         })
         
 
@@ -523,7 +496,7 @@ describe('Database test suite' , () => {
         })
         test('logout unsuccesful if user x not logged in' , async()=> {
             const response = await request(app).post('/auth/logout')
-            // console.log(console.dir(response.body));
+            console.log(console.dir(response.body));
             expect(response.body.status).toBe(404);
         })
     })
@@ -573,7 +546,7 @@ describe('Database test suite' , () => {
                                                 .send(data3);
             // console.log(JSON.stringify(response.body));
 
-            // console.log(console.dir(res4.body));
+            console.log(console.dir(res4.body));
 
 
             const fetchedUserY = await tb_tweet.findOne({'title' : 'User Y'});
@@ -598,11 +571,11 @@ describe('Database test suite' , () => {
                         .set('Content-type' , 'application/json')
                         .expect(200)
 
-            // console.log(console.dir(res5.body));
+            console.log(console.dir(res5.body));
             let ans = (res5.body.data[0].creationDatetime) > (res5.body.data[1].creationDatetime)
 
             expect(res5.body.data.length).toBe(2);
-            // console.log(res5.body.data.length);
+            console.log(res5.body.data.length);
                         
         })
 
@@ -619,7 +592,7 @@ describe('Database test suite' , () => {
                                             .set('Cookie' , res3.headers['set-cookie'])
                                             .expect(200)
             expect(res6.body.data.length).toBe(1);
-            // console.log(res6.body.data.length);
+            console.log(res6.body.data.length);
         })
     });
 });
@@ -631,7 +604,6 @@ describe('Database test suite' , () => {
 
     
     
-
 
 
 

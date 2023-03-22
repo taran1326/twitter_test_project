@@ -54,32 +54,32 @@ function cleanUpAndValidate({name, username , email, phone, password}) {
 
 const isAuth = async(req, res, next) => {
 
-    console.log(1243);
+    // console.log(1243);
       // 1. Get the token;
       const token = req.headers.authorization;
       if(!token){
-          console.log(123);
+        //   console.log(123);
           return res.send("Token missing").status(401);
       }
       // 2. Check if token is in DB
       let jwtResponse;
         try{
           const response = await User.verifyTokenExists(token); //response : userDb
-          console.log(response);
+        //   console.log(response);
           if(!response){
-            console.log(12345);
+            // console.log(12345);
             return res.send("Token invalid").status(401);
           }
           try{
             jwtResponse = jwt.verify(response.tokens, "THISISAPRIVATEKEY");
           }
           catch(err){
-            console.log("HELLO");
+            // console.log("HELLO");
             return res.send("token 1invalid").status(401);
           }
-          console.log(jwtResponse);
+        //   console.log(jwtResponse);
           req.user = jwtResponse;
-          console.log(req.user._id);
+        //   console.log(req.user._id);
         }
         catch(err){
             console.log(err);
