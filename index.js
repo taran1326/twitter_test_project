@@ -11,20 +11,20 @@ const TweetsRouter = require('./Controllers/Tweet');
 
 const app = express();
 
-const store = new MongoDbSession({
-    uri: "mongodb://0.0.0.0:27017/TwitterDB",
-    collection: 'tb_sessions'
-})
+// const store = new MongoDbSession({
+//     uri: "mongodb://0.0.0.0:27017/TwitterDB",
+//     collection: 'tb_sessions'
+// })
 
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(session({
-    secret: 'abcdefg',
-    resave: false,
-    saveUninitialized: false,
-    store: store
-}))
+// app.use(session({
+//     secret: 'abcdefg',
+//     resave: false,
+//     saveUninitialized: false,
+//     store: store
+// }))
 
 // Routes
 app.use('/auth', AuthRouter);
@@ -37,4 +37,4 @@ app.get('/', (req, res) => {
         message: "Welcome"
     })
 })
-module.exports = {app , store };
+module.exports = app;

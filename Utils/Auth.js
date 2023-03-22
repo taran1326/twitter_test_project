@@ -1,4 +1,6 @@
 const validator = require('validator');
+const User  = require('../Models/User');
+const jwt = require("jsonwebtoken");
 
 function cleanUpAndValidate({name, username , email, phone, password}) {
     return new Promise((resolve, reject) => {
@@ -50,16 +52,30 @@ function cleanUpAndValidate({name, username , email, phone, password}) {
     })
 }
 
-const isAuth = (req, res, next) => {
-    if(req.session.isAuth) {
-        next()
-    }
-    else {
-        return res.send({
-            status: 404,
-            message: "Invalid user session. Please log in."
-        })
-    }
+const isAuth = async(req, res, next) => {
+
+    console.log(1243);
+      // 1. Get the token;
+      const token = req.headers.authorization;
+      if(!token){
+          console.log(123);
+          return res.send("Token missing").status(401);
+      }
+      // 2. Check if token is in DB
+      try{
+          const response = await User.verifyTokenExists(token);
+          if(!response){
+            console.log(12345);
+            return res.send("Token invalid").status(401);
+          }
+          const jwtResponse = jwt.verify(token, "THISISAPRIVATEKEY");
+          req.user = jwtResponse;
+          console.log(req.user._id);
+      }catch(err){
+          console.log(err);
+          return res.send("Token invalid").status(401);
+      }
+      next();
 }
 
 module.exports = { cleanUpAndValidate, isAuth };

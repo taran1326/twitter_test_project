@@ -18,6 +18,8 @@ async function connect(){
     }
 }
 
+connect();
+
 
 module.exports = {connect};
 // mongoose.connect("mongodb://0.0.0.0:27017/TwitterDB", {
@@ -32,6 +34,5 @@ module.exports = {connect};
 // }).catch(err => {
 //     console.log('Error in connecting with mongo');
 // })
-
 
 

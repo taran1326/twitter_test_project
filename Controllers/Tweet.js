@@ -8,7 +8,8 @@ const { isAuth } = require('../Utils/Auth');
 tweetsRouter.post('/create-tweet',isAuth, async (req, res) => {
 
     const { title, bodyText } = req.body;
-    const { userId } = req.session.user;
+    console.log(req.user._id);
+    const userId = req.user._id;
 
     if(!title || !bodyText) {
         return res.send({
@@ -64,7 +65,7 @@ tweetsRouter.post('/create-tweet',isAuth, async (req, res) => {
 tweetsRouter.get('/feed', isAuth, async (req, res) => {
 
     const offset = req.query.offset || 0;
-    const userId = req.session.user.userId;
+    const userId = req.user._id;
 
     try {
 
@@ -90,7 +91,7 @@ tweetsRouter.get('/feed', isAuth, async (req, res) => {
 tweetsRouter.get('/my-tweets', isAuth, async (req, res) => {
 
     const offset = req.query.offset || 0;
-    const userId = req.session.user.userId;
+    const userId = req.user._id;
 
     if(!userId) {
         return res.send({

@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require("jsonwebtoken");
 
 const { cleanUpAndValidate, isAuth } = require('../Utils/Auth');
 const User  = require('../Models/User');
@@ -15,7 +16,6 @@ authRouter.post('/register', async (req, res) => {
             await User.verifyUsernameAndEmailExists({username, email});
         }
         catch(err) {
-            
             return res.send({
                 status: 401,
                 message: err
@@ -34,7 +34,6 @@ authRouter.post('/register', async (req, res) => {
             })
         }
         catch(err) {
-            
             return res.send({
                 status: 401,
                 message: "Database Error. Please try again",
@@ -43,7 +42,6 @@ authRouter.post('/register', async (req, res) => {
         }
     })
     .catch(err => {
-
         return res.send({
             status: 401,
             message: err
@@ -64,24 +62,30 @@ authRouter.post('/login', async (req, res) => {
 
     try {
         const dbUser = await User.loginUser({loginId, password});
-
-        req.session.isAuth = true;
-        req.session.user = {
+        
+        // req.session.isAuth = true;
+        // req.session.user = {
+        //     email: dbUser.email,
+        //     username: dbUser.username,
+        //     name: dbUser.name,
+        //     userId: dbUser._id
+        // }
+        console.log(dbUser);
+        const token = jwt.sign({
             email: dbUser.email,
             username: dbUser.username,
             name: dbUser.name,
-            userId: dbUser._id
-        }
+            _id: dbUser._id
+        }, "THISISAPRIVATEKEY", {expiresIn:'1h'});
+        dbUser.token=token;
+        const userToUpdate = new User(dbUser);
+        console.log(dbUser);
+        userToUpdate.updateUser(dbUser._id);
 
         return res.send({
             status: 200,
             message: "Logged in Successfully",
-            data: {
-                email: dbUser.email,
-                username: dbUser.username,
-                name: dbUser.name,
-                _id: dbUser._id
-            }
+            data: dbUser
         })
     }
     catch(err) {
@@ -93,23 +97,19 @@ authRouter.post('/login', async (req, res) => {
     }
 })
 
-authRouter.post('/logout', isAuth, (req, res) => {
+authRouter.post('/logout', isAuth, async (req, res) => {
 
-    const userData = req.session.user;
-
-    req.session.destroy(err => {
-        if(err) {
-            return res.send({
-                status: 404,
-                message: "Loggout unsuccessful. Please try again.",
-                error: err
-            })
-        }
-        return res.send({
-            status: 200,
-            message: "Loggout successful",
-            data: userData
-        })
+    console.log(1223);
+    // const userData = req.session.user;
+    const token = req.headers.authorization;
+    const dbUser = await User.verifyTokenExists(token);
+    dbUser.token=null;
+    const userToUpdate = new User(dbUser);
+    userToUpdate.updateUser(dbUser._id);
+    return res.send({
+        status: 200,
+        message: "Logout successful",
+        // data: 
     })
 })
 
