@@ -6,46 +6,46 @@ function cleanUpAndValidate({name, username , email, phone, password}) {
     return new Promise((resolve, reject) => {
 
         if(!(name && username && password)) {
-            return reject('Missing parameters');
+            return reject(new Error('Missing parameters'));
         }
 
 
         // //working
         if(!validator.isEmail(email)) {
-            return reject('Invalid Email');
+            return reject(new Error('Invalid Email'));
         }
 
         if(validator.isEmail(username)) {
-            return reject('Username cannot be an email');
+            return reject(new Error('Username cannot be an email'));
         }
 
         if(phone && phone.length !== 10) {
-            return reject('Invalid Phone number');
+            return reject(new Error('Invalid Phone number'));
         }
         // working
         if(username.length < 3) {
-            return reject('Username is too short');
+            return reject(new Error('Username is too short'));
         }
         //working
         if(username.length > 50) {
-            return reject('Username should be at max 50 characters');
+            return reject(new Error('Username should be at max 50 characters'));
         }
         //working
         if(password.length < 6) {
-            return reject('Password is too short ');
+            return reject(new Error('Password is too short '));
         }
         //working
         if(password.length > 200) {
-            return reject('Password should be at max 200 characters long');
+            return reject(new Error('Password should be at max 200 characters long'));
         }
 
         //working
         if(name.length > 100) {
-            return reject('Name should be at max 100 characters long');
+            return reject(new Error('Name should be at max 100 characters long'));
         }
         //working
         if(!validator.isAlphanumeric(password)) {
-            return reject('Password should be alphanumeric');
+            return reject(new Error('Password should be alphanumeric'));
         }
 
         resolve();
