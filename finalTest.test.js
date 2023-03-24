@@ -14,259 +14,282 @@ const User = require('./Models/User');
 const { ObjectId } = require('mongodb');
 const Tweets = require('./Schemas/Tweets');
 
+
 describe('Database test suite' , () => {
 
     // //clearing up all the documents in collections (data in database)
     
-    // describe('Check if email has a correct format' , ()=>{
-    // it('email is not present' , async()=>{
-    //     const data = {
-    //         "name" :"iamfirst",
-    //         "username": "john12",
-    //         "password": "John1234"
-    //     }
+    
+    /*
+    describe('Check if email has a correct format' , ()=>{
+    it('email is not present' , async()=>{
+        const data = {
+            "name" :"iamfirst",
+            "username": "john12",
+            "password": "John1234"
+        }
         
-    //     const response = await request(app).post('/auth/register')
-    //                                         .set('Content-type' , 'application/json')
-    //                                         .send(data);
-    //     expect(response.body.status).toBe(401);
-    //     expect(response.body).toHaveProperty('message');
+        const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
 
-    // });
+        // expect(resp)
 
-    // it('email has wrong format (missing @ and .)' , async()=>{
-    //     const data = {
-    //         "name": "John",
-    //         "username": "john12",
-    //         "email": "john34mailcom",
-    //         "password": "John1234"
-    //     }
+        // expect(response).toThrow()
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
+
+    });
+
+    it('email has wrong format (missing @ and .)' , async()=>{
+        const data = {
+            "name": "John",
+            "username": "john12",
+            "email": "john34mailcom",
+            "password": "John1234"
+        }
         
-    //     const response = await request(app).post('/auth/register')
-    //                                         .set('Content-type' , 'application/json')
-    //                                         .send(data);
-    //     expect(response.body.status).toBe(401);
-    //     expect(response.body).toHaveProperty('message');
-    // });
+        const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+        expect(response.body.status).toBe(401);
+        expect(response.body).toHaveProperty('message');
+    });
 
-    // });
+    });
 
-    // describe('Check if name has a correct format' , ()=>{
-    //     it('name is not present' , async()=>{
-    //         const data = {
-    //             "username": "john124",
-    //             "email": "john34@mail.com",
-    //             "password": "John1234"
-    //         }
+    describe('Check if name has a correct format' , ()=>{
+        it('name is not present' , async()=>{
+            const data = {
+                "username": "john124",
+                "email": "john34@mail.com",
+                "password": "John1234"
+            }
             
-    //         const response = await request(app).post('/auth/register')
-    //                                             .set('Content-type' , 'application/json')
-    //                                             .send(data);
-    //         expect(response.body.status).toBe(401);
-    //         expect(response.body).toHaveProperty('message');
+            const response = await request(app).post('/auth/register')
+                                                .set('Content-type' , 'application/json')
+                                                .send(data);
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
 
-    //     });
-    //     it('NAME LENGTH LONGER THAN 100 CHARACTERS' , async()=>{
-    //         const data = {
-    //             "name": "JohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohn",
-    //             "username": "john12",
-    //             "email": "john34@mail.com",
-    //             "password": "John1234"
-    //         }
+        });
+        it('NAME LENGTH LONGER THAN 100 CHARACTERS' , async()=>{
+            const data = {
+                "name": "JohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohn",
+                "username": "john12",
+                "email": "john34@mail.com",
+                "password": "John1234"
+            }
             
-    //         const response = await request(app).post('/auth/register')
-    //                                             .set('Content-type' , 'application/json')
-    //                                             .send(data);
-    //         expect(response.body.status).toBe(401);
-    //         expect(response.body).toHaveProperty('message');
+            const response = await request(app).post('/auth/register')
+                                                .set('Content-type' , 'application/json')
+                                                .send(data);
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
 
-    //     });
-    // });
+        });
+    });
 
 
-    // describe('Check if username has a correct format' , ()=>{
-    //     it('username is not present' , async()=>{
-    //         const data = {
-    //             "name": "John",
-    //             "email": "john34@mail.com",
-    //             "password": "John1234"
-    //         }
+    describe('Check if username has a correct format' , ()=>{
+        it('username is not present' , async()=>{
+            const data = {
+                "name": "John",
+                "email": "john34@mail.com",
+                "password": "John1234"
+            }
             
-    //         const response = await request(app).post('/auth/register')
-    //                                         .set('Content-type' , 'application/json')
-    //                                         .send(data);
-    //         expect(response.body.status).toBe(401 );
-    //         expect(response.body).toHaveProperty('message');
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+            expect(response.body.status).toBe(401 );
+            expect(response.body).toHaveProperty('message');
 
-    //     });
+        });
 
-    //     it('USERNAME IS EQUAL TO EMAIL' , async()=> {
-    //         const data = {
-    //             "name": "John",
-    //             "username": "john34@mail.com",
-    //             "email": "john34@mail.com",
-    //             "password": "John1234" 
-    //         }
-    //         const response = await request(app).post('/auth/register')
-    //                                         .set('Content-type' , 'application/json')
-    //                                         .send(data);
-    //         expect(response.body.status).toBe(401 );
-    //         expect(response.body).toHaveProperty('message');
+        it('USERNAME IS EQUAL TO EMAIL' , async()=> {
+            const data = {
+                "name": "John",
+                "username": "john34@mail.com",
+                "email": "john34@mail.com",
+                "password": "John1234" 
+            }
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+            expect(response.body.status).toBe(401 );
+            expect(response.body).toHaveProperty('message');
 
 
 
-    //     })
+        })
 
-    //     it('USERNAME LENGTH SMALLER THAN 3' , async()=>{
-    //         const data = {
-    //             "name": "John",
-    //             "username": "jo",
-    //             "email": "john34@mail.com",
-    //             "password": "John1234"
-    //         }
+        it('USERNAME LENGTH SMALLER THAN 3' , async()=>{
+            const data = {
+                "name": "John",
+                "username": "jo",
+                "email": "john34@mail.com",
+                "password": "John1234"
+            }
             
-    //         const response = await request(app).post('/auth/register')
-    //                                         .set('Content-type' , 'application/json')
-    //                                         .send(data);
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
 
-    //         expect(response.body.status).toBe(401);
-    //         expect(response.body).toHaveProperty('message');
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
 
-    //     });
+        });
 
-    //     it('USERNAME LENGTH GREATER THAN 50' , async()=>{
-    //         const data = {
-    //             "name":"John",
-    //             "username": "john1234567890john1234567890john1234567890john123456789",
-    //             "email": "john34@mail.com",
-    //             "password": "John1234"
-    //         }
-
-
-    //         const response = await request(app).post('/auth/register')
-    //                                         .set('Content-type' , 'application/json')
-    //                                         .send(data);
-    //         expect(response.body.status).toBe(401);
-    //         expect(response.body).toHaveProperty('message');
-    //     });
-
-    // });
+        it('USERNAME LENGTH GREATER THAN 50' , async()=>{
+            const data = {
+                "name":"John",
+                "username": "john1234567890john1234567890john1234567890john123456789",
+                "email": "john34@mail.com",
+                "password": "John1234"
+            }
 
 
-    // describe('Check if password has a correct format' , ()=>{
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
+        });
 
-    //     // it('password end point not correct')
-    //     it('password is not present' , async()=>{
-    //         const data = {
-    //             "name": "John",
-    //             "username": "John123",
-    //             "email": "john34@mail.com",
-    //         }
+    });
+
+
+    describe('Check if password has a correct format' , ()=>{
+
+        // it('password end point not correct')
+        it('password is not present' , async()=>{
+            const data = {
+                "name": "John",
+                "username": "John123",
+                "email": "john34@mail.com",
+            }
             
-    //         const response = await request(app).post('/auth/register')
-    //                                         .set('Content-type' , 'application/json')
-    //                                         .send(data);
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
 
-    //         expect(response.body.status).toBe(401);
-    //         expect(response.body).toHaveProperty('message');
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
 
-    //     });
+        });
 
-    //     it('PASSWORD NOT ALPHANUMERIC' , async()=>{
-    //         const data = {
-    //             "name": "John",
-    //             "username": "john123",
-    //             "email": "john34@mail.com",
-    //             "password": "John@1234"
-    //         }
+        it('PASSWORD NOT ALPHANUMERIC' , async()=>{
+            const data = {
+                "name": "John",
+                "username": "john123",
+                "email": "john34@mail.com",
+                "password": "John@1234"
+            }
             
-    //         const response = await request(app).post('/auth/register')
-    //                                         .set('Content-type' , 'application/json')
-    //                                         .send(data);
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
 
-    //         expect(response.body.status).toBe(401);
-    //         expect(response.body).toHaveProperty('message');
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
 
-    //     });
-    //     it('PASSWORD LENGTH LONGER THAN 200 CHARACTERS' , async()=>{
-    //         const data = {
-    //             "name": "John",
-    //             "username": "john123",
-    //             "email": "john34@mail.com",
-    //             "password": "John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234"
-    //         }
+        });
+        it('PASSWORD LENGTH LONGER THAN 200 CHARACTERS' , async()=>{
+            const data = {
+                "name": "John",
+                "username": "john123",
+                "email": "john34@mail.com",
+                "password": "John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234"
+            }
             
-    //         const response = await request(app).post('/auth/register')
-    //                                         .set('Content-type' , 'application/json')
-    //                                         .send(data);
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
 
-    //         expect(response.body.status).toBe(401);
-    //         expect(response.body).toHaveProperty('message');
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
 
-    //     });
-    //     it('PASSWORD LENGTH SHORTER THAN 6 CHARACTERS' , async()=>{
-    //         const data = {
-    //             "name": "John",
-    //             "username": "john123",
-    //             "email": "john34@mail.com",
-    //             "password": "Joh"
-    //         }
+        });
+        it('PASSWORD LENGTH SHORTER THAN 6 CHARACTERS' , async()=>{
+            const data = {
+                "name": "John",
+                "username": "john123",
+                "email": "john34@mail.com",
+                "password": "Joh"
+            }
             
-    //         const response = await request(app).post('/auth/register')
-    //                                         .set('Content-type' , 'application/json')
-    //                                         .send(data);
-    //         expect(response.body.status).toBe(401);
-    //         expect(response.body).toHaveProperty('message');
+            const response = await request(app).post('/auth/register')
+                                            .set('Content-type' , 'application/json')
+                                            .send(data);
+            expect(response.body.status).toBe(401);
+            expect(response.body).toHaveProperty('message');
 
-    //     });
+        });
 
-    // });
+    });
+    */
+
+
 
 
                                         /*Major functionality tests */
 
 
+    // to clear all the collections in database before running tests
+    // beforeAll (async () =>{
+    //     await tb_tweet.deleteMany({});
+    //     await tb_user.deleteMany({});
+    //     await tb_tokens.deleteMany({});
+    // })
 
-    beforeAll(async () =>{
-        await tb_tweet.deleteMany({});
-        await tb_user.deleteMany({});
-    })
     let res , res1 ; 
 
     describe('User X Sign Up functionality check' , ()=> {
-        afterAll(async()=> {
+        //to clear the users collection in database after runnig the tests
+        // afterAll(async()=> {
+        //     await tb_user.deleteMany({});
+        // })
+
+        beforeAll(async()=> {
             await tb_user.deleteMany({});
         })
+        afterAll(async()=>{
+            await tb_user.deleteMany({});
+        })
+
+
+
         const data = {
-            "name": "John",
-            "username": "john1353",
-            "email": "john3152@mail.com",
-            "password": "John1234"
+            name: "test user",
+            username: "testuser",
+            email: "testuser@mail.com",
+            password: "testuser"
         }
         
-        test('User X should be able to register and login if credentials are valid' , async()=>{
-            const res = await request(app).post('/auth/register')
+        test('User X should be able to register if credentials are valid' , async()=>{
+            const response = await request(app).post('/auth/register')
                                     .set('Content-type', 'application/json')
                                     .send(data) 
             // console.log(res.body.data);
-            expect(res.statusCode).toBe(200);
-            expect(res.body.data).toHaveProperty('username');
-            expect(res.body.data).toHaveProperty('name');
-            expect(res.body.data).toHaveProperty('email');
-            expect(res.body.data.email).toBe("john3152@mail.com");
-            expect(res.body.data.username).toBe("john1353");
-            expect(res.body.data.name).toBe("John");
+            expect(response.statusCode).toBe(200);
+            expect(response.body.data).toHaveProperty('username');
+            expect(response.body.data).toHaveProperty('name');
+            expect(response.body.data).toHaveProperty('email');
+            expect(response.body.data.email).toBe("testuser@mail.com");
+            expect(response.body.data.username).toBe("testuser");
+            expect(response.body.data.name).toBe("test user");
             
         });
 
-        it('if user X signs up length of collection should increase' , async()=>{
+        test('if user X signs up length of collection should increase' , async()=>{
             const num = await tb_user.countDocuments();
             expect(num).toBe(1);
 
         })
-        it('finding user in database' , async()=>{
+        test('Signed up user should be present in database and password should be hashed properly' , async()=>{
             
-            const result = await tb_user.findOne({'name':'John'});
+            const result = await tb_user.findOne({'name':'test user'});
             expect(result.name).toEqual(data.name);
             expect(result.email).toEqual(data.email);
             expect(result.username).toEqual(data.username);
@@ -276,13 +299,13 @@ describe('Database test suite' , () => {
             expect(isMatch).toBe(true);
         }) 
 
-
-        it('should give an error if the user exists (same email)' , async() => {
+        //Duplicate user check if same email
+        test('should give an error if the user exists (same email)' , async() => {
             const data = {
-                "name": "John",
-                "username": "john1355",
-                "email": "john3152@mail.com",
-                "password": "John1234"
+                "name": "test user",
+                "username": "testusersignup",
+                "email": "testuser@mail.com",
+                "password": "testuser"
             }
             const response = await request(app).post('/auth/register')
                                     .set('Content-type', 'application/json')
@@ -294,10 +317,10 @@ describe('Database test suite' , () => {
         it('should give an error if the user exists (same username)' , async() => {
 
             const data = {
-                "name": "John",
-                "username": "john1353",
-                "email": "john3156@mail.com",
-                "password": "John1234"
+                "name": "test user",
+                "username": "testuser",
+                "email": "testusersignup@mail.com",
+                "password": "testuser"
             }
             const response = await request(app).post('/auth/register')
                                     .set('Content-type', 'application/json')
@@ -313,11 +336,14 @@ describe('Database test suite' , () => {
     describe('User X Sign In functionality check ', ()=>{
 
 
-
-
-        afterAll(async() =>{
-            await tb_user.deleteMany({});
+        //after running the tests clear all the users and tokens
+        afterAll(async() => {
+            tb_user.deleteMany({});
+            tb_tokens.deleteMany({});
         })
+
+
+        
 
         it('should give an error (500 code) if password missing' , async() => {
             const errorPasswordMissing = await request(app).post('/auth/login')
@@ -377,8 +403,11 @@ describe('Database test suite' , () => {
     
                 }
             );
-        
-            mydata.save();
+            
+            
+
+            await tb_user.insertMany(mydata);
+
 
 
 
@@ -399,7 +428,11 @@ describe('Database test suite' , () => {
             //fetched password of user from database 
             const boolAns = await bcrypt.compare('John1234' , fetchUserSignIn.password);
             expect(boolAns).toBeTruthy();
-
+            
+ 
+            //increase in len of the tokens collection
+            const lenOfTokensCollection = await tb_tokens.countDocuments({});
+            expect(lenOfTokensCollection).toBe(1); 
             expect(responseLogIn.body).toHaveProperty('message');
             expect(responseLogIn.body.data).toHaveProperty('email');
             expect(responseLogIn.body.data).toHaveProperty('_id');
@@ -419,6 +452,7 @@ describe('Database test suite' , () => {
 
 
         let token , dbUser;
+        
         beforeAll(async()=> {
             const passwordstring = "TaranIsTheOne";
             const hashedPassword = await bcrypt.hash( passwordstring, 1);
@@ -461,13 +495,14 @@ describe('Database test suite' , () => {
             // await userSchema.findOneAndUpdate({_id: dbUser._id} , userToUpdate);
         });
 
-        beforeEach(done => {
-            setTimeout(() => {
-              done();
-            }, 2000); // delay for 2 seconds
-        });
+        // beforeEach(done => {
+        //     setTimeout(() => {
+        //       done();
+        //     }, 2000); // delay for 2 seconds
+        // });
 
         afterAll(async() => {
+            await tb_user.deleteMany({});
             await tb_tweet.deleteMany({}); 
             await tb_tokens.deleteMany({});
         })
@@ -507,6 +542,12 @@ describe('Database test suite' , () => {
     })
 
     describe('My tweet' , () =>{
+
+        afterAll(async()=> {
+            await tb_tokens.deleteMany({});
+            await tb_user.deleteMany({});
+            await tb_tweet.deleteMany({}); 
+        })
 
         let token , dbUser;
         beforeAll(async()=> {
@@ -553,10 +594,10 @@ describe('Database test suite' , () => {
         });
 
 
-        afterAll(async() => {
-            await tb_tweet.deleteMany({});
-            await tb_tokens.deleteMany({});
-        })
+        // afterAll(async() => {
+        //     await tb_tweet.deleteMany({});
+        //     await tb_tokens.deleteMany({});
+        // })
 
 
         test('User X should be able to read his tweets' , async()=>{
@@ -686,9 +727,11 @@ describe('Database test suite' , () => {
         });
 
 
-        // afterAll(async() => {
-        //     await tb_tweet.deleteMany({}); 
-        // })
+        afterAll(async() => {
+            await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({}); 
+        })
 
 
         test('Second user should be able to read tweets of all' , async()=>{
@@ -735,10 +778,17 @@ describe('Database test suite' , () => {
 
     describe('Logout' , ()=> {
             
-        beforeAll(async()=>{
-            await tb_tokens.deleteMany({}); 
+        // beforeAll(async()=>{
+        //     await tb_tokens.deleteMany({}); 
+        //     await tb_user.deleteMany({});
+        //     await tb_tweet.deleteMany({});
+        // })
+
+
+        afterAll(async() => {
             await tb_user.deleteMany({});
-            await tb_tweet.deleteMany({});
+            await tb_tokens.deleteMany({});
+
         })
         let token , dbUser;
         beforeAll(async()=> {
@@ -786,10 +836,10 @@ describe('Database test suite' , () => {
         })
 
 
-        afterAll(async() => {
-            await tb_user.deleteMany({});
-            await tb_tokens.deleteMany({});
-        })
+        // afterAll(async() => {
+        //     await tb_user.deleteMany({});
+        //     await tb_tokens.deleteMany({});
+        // })
         it('logout test' , async()=>{
             const response = await request(app).post('/auth/logout')
                                                .set('Authorization', token)
@@ -806,11 +856,18 @@ describe('Database test suite' , () => {
 
     describe('Logout from all devices' , ()=>{
 
-        beforeAll(async()=>{
-            await tb_tokens.deleteMany({}); 
+
+        afterAll(async() => {
             await tb_user.deleteMany({});
-            await tb_tweet.deleteMany({});
+            await tb_tokens.deleteMany({});
+
         })
+
+        // beforeAll(async()=>{
+        //     await tb_tokens.deleteMany({}); 
+        //     await tb_user.deleteMany({});
+        //     await tb_tweet.deleteMany({});
+        // })
         let token , dbUser , token2;
         beforeAll(async()=> {
             const passwordstring = "John1234";

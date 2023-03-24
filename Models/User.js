@@ -110,7 +110,11 @@ class User {
             })
 
             try {
+
+
                 const dbUser = await user.save();
+
+                console.log(dbUser);
 
                 return resolve({
                     username: dbUser.username,

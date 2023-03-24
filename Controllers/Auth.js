@@ -35,6 +35,7 @@ authRouter.post('/register', async (req, res) => {
             })
         }
         catch(err) {
+            console.log(err.message); 
             return res.send({
                 status: 401,
                 message: "Database Error. Please try again",
@@ -43,6 +44,7 @@ authRouter.post('/register', async (req, res) => {
         }
     })
     .catch(err => {
+        console.log(err.message); 
         return res.send({
             status: 401,
             message: err
