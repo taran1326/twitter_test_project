@@ -13,235 +13,21 @@ const jwt = require('jsonwebtoken');
 const User = require('./Models/User');
 const { ObjectId } = require('mongodb');
 const Tweets = require('./Schemas/Tweets');
+const { disabled } = require('./index');
+const { default: mongoose } = require('mongoose');
 
 
 describe('Database test suite' , () => {
+    afterAll(async()=> {
+        await mongoose.connection.db.dropCollection('tb_users')
+        await mongoose.connection.db.dropCollection('tb_tokens')
+        await mongoose.connection.db.dropCollection('tb_tweets')
+    })
 
-    // //clearing up all the documents in collections (data in database)
-    
-    
-    /*
-    describe('Check if email has a correct format' , ()=>{
-    it('email is not present' , async()=>{
-        const data = {
-            "name" :"iamfirst",
-            "username": "john12",
-            "password": "John1234"
-        }
-        
-        const response = await request(app).post('/auth/register')
-                                            .set('Content-type' , 'application/json')
-                                            .send(data);
-
-        // expect(resp)
-
-        // expect(response).toThrow()
-        expect(response.body.status).toBe(401);
-        expect(response.body).toHaveProperty('message');
-
-    });
-
-    it('email has wrong format (missing @ and .)' , async()=>{
-        const data = {
-            "name": "John",
-            "username": "john12",
-            "email": "john34mailcom",
-            "password": "John1234"
-        }
-        
-        const response = await request(app).post('/auth/register')
-                                            .set('Content-type' , 'application/json')
-                                            .send(data);
-        expect(response.body.status).toBe(401);
-        expect(response.body).toHaveProperty('message');
-    });
-
-    });
-
-    describe('Check if name has a correct format' , ()=>{
-        it('name is not present' , async()=>{
-            const data = {
-                "username": "john124",
-                "email": "john34@mail.com",
-                "password": "John1234"
-            }
-            
-            const response = await request(app).post('/auth/register')
-                                                .set('Content-type' , 'application/json')
-                                                .send(data);
-            expect(response.body.status).toBe(401);
-            expect(response.body).toHaveProperty('message');
-
-        });
-        it('NAME LENGTH LONGER THAN 100 CHARACTERS' , async()=>{
-            const data = {
-                "name": "JohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohnJohn",
-                "username": "john12",
-                "email": "john34@mail.com",
-                "password": "John1234"
-            }
-            
-            const response = await request(app).post('/auth/register')
-                                                .set('Content-type' , 'application/json')
-                                                .send(data);
-            expect(response.body.status).toBe(401);
-            expect(response.body).toHaveProperty('message');
-
-        });
-    });
-
-
-    describe('Check if username has a correct format' , ()=>{
-        it('username is not present' , async()=>{
-            const data = {
-                "name": "John",
-                "email": "john34@mail.com",
-                "password": "John1234"
-            }
-            
-            const response = await request(app).post('/auth/register')
-                                            .set('Content-type' , 'application/json')
-                                            .send(data);
-            expect(response.body.status).toBe(401 );
-            expect(response.body).toHaveProperty('message');
-
-        });
-
-        it('USERNAME IS EQUAL TO EMAIL' , async()=> {
-            const data = {
-                "name": "John",
-                "username": "john34@mail.com",
-                "email": "john34@mail.com",
-                "password": "John1234" 
-            }
-            const response = await request(app).post('/auth/register')
-                                            .set('Content-type' , 'application/json')
-                                            .send(data);
-            expect(response.body.status).toBe(401 );
-            expect(response.body).toHaveProperty('message');
-
-
-
-        })
-
-        it('USERNAME LENGTH SMALLER THAN 3' , async()=>{
-            const data = {
-                "name": "John",
-                "username": "jo",
-                "email": "john34@mail.com",
-                "password": "John1234"
-            }
-            
-            const response = await request(app).post('/auth/register')
-                                            .set('Content-type' , 'application/json')
-                                            .send(data);
-
-            expect(response.body.status).toBe(401);
-            expect(response.body).toHaveProperty('message');
-
-        });
-
-        it('USERNAME LENGTH GREATER THAN 50' , async()=>{
-            const data = {
-                "name":"John",
-                "username": "john1234567890john1234567890john1234567890john123456789",
-                "email": "john34@mail.com",
-                "password": "John1234"
-            }
-
-
-            const response = await request(app).post('/auth/register')
-                                            .set('Content-type' , 'application/json')
-                                            .send(data);
-            expect(response.body.status).toBe(401);
-            expect(response.body).toHaveProperty('message');
-        });
-
-    });
-
-
-    describe('Check if password has a correct format' , ()=>{
-
-        // it('password end point not correct')
-        it('password is not present' , async()=>{
-            const data = {
-                "name": "John",
-                "username": "John123",
-                "email": "john34@mail.com",
-            }
-            
-            const response = await request(app).post('/auth/register')
-                                            .set('Content-type' , 'application/json')
-                                            .send(data);
-
-            expect(response.body.status).toBe(401);
-            expect(response.body).toHaveProperty('message');
-
-        });
-
-        it('PASSWORD NOT ALPHANUMERIC' , async()=>{
-            const data = {
-                "name": "John",
-                "username": "john123",
-                "email": "john34@mail.com",
-                "password": "John@1234"
-            }
-            
-            const response = await request(app).post('/auth/register')
-                                            .set('Content-type' , 'application/json')
-                                            .send(data);
-
-            expect(response.body.status).toBe(401);
-            expect(response.body).toHaveProperty('message');
-
-        });
-        it('PASSWORD LENGTH LONGER THAN 200 CHARACTERS' , async()=>{
-            const data = {
-                "name": "John",
-                "username": "john123",
-                "email": "john34@mail.com",
-                "password": "John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234John1234"
-            }
-            
-            const response = await request(app).post('/auth/register')
-                                            .set('Content-type' , 'application/json')
-                                            .send(data);
-
-            expect(response.body.status).toBe(401);
-            expect(response.body).toHaveProperty('message');
-
-        });
-        it('PASSWORD LENGTH SHORTER THAN 6 CHARACTERS' , async()=>{
-            const data = {
-                "name": "John",
-                "username": "john123",
-                "email": "john34@mail.com",
-                "password": "Joh"
-            }
-            
-            const response = await request(app).post('/auth/register')
-                                            .set('Content-type' , 'application/json')
-                                            .send(data);
-            expect(response.body.status).toBe(401);
-            expect(response.body).toHaveProperty('message');
-
-        });
-
-    });
-    */
-
-
-
-
-                                        /*Major functionality tests */
+                                    /*Major functionality tests */
 
 
     // to clear all the collections in database before running tests
-    // beforeAll (async () =>{
-    //     await tb_tweet.deleteMany({});
-    //     await tb_user.deleteMany({});
-    //     await tb_tokens.deleteMany({});
-    // })
 
     let res , res1 ; 
 
@@ -254,6 +40,7 @@ describe('Database test suite' , () => {
         beforeAll(async()=> {
             await tb_user.deleteMany({});
         })
+
         afterAll(async()=>{
             await tb_user.deleteMany({});
         })
@@ -778,11 +565,11 @@ describe('Database test suite' , () => {
 
     describe('Logout' , ()=> {
             
-        // beforeAll(async()=>{
-        //     await tb_tokens.deleteMany({}); 
-        //     await tb_user.deleteMany({});
-        //     await tb_tweet.deleteMany({});
-        // })
+        beforeAll(async()=>{
+            await tb_tokens.deleteMany({}); 
+            await tb_user.deleteMany({});
+            await tb_tweet.deleteMany({});
+        })
 
 
         afterAll(async() => {

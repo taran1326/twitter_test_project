@@ -46,17 +46,17 @@ class User {
         })
     }
 
-    static verifyUserIdExists(userId) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const userDb = await UserSchema.findOne({_id: userId});
-                resolve(userDb);
-            }
-            catch(err) {
-                reject(err);
-            }
-        })
-    }
+    // static verifyUserIdExists(userId) {
+    //     return new Promise(async (resolve, reject) => {
+    //         try {
+    //             const userDb = await UserSchema.findOne({_id: userId});
+    //             resolve(userDb);
+    //         }
+    //         catch(err) {
+    //             reject(err);
+    //         }
+    //     })
+    // }
 
     static verifyTokenExists(token) {
         return new Promise(async (resolve, reject) => {

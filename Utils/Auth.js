@@ -9,7 +9,6 @@ function cleanUpAndValidate({name, username , email, phone, password}) {
             return reject(new Error('Missing parameters'));
         }
 
-
         // //working
         if(!validator.isEmail(email)) {
             return reject(new Error('Invalid Email'));
@@ -88,4 +87,6 @@ const isAuth = async(req, res, next) => {
       next();
 }
 
-module.exports = { cleanUpAndValidate, isAuth };
+module.exports = { 
+  cleanUpAndValidate, isAuth
+};

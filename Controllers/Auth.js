@@ -147,7 +147,7 @@ authRouter.post('/logout_from_all_devices', isAuth ,async (req, res) => {
     }
     catch(err) {
         return res.send({
-            status: 200,
+            status: 500,
             message: "Internal server error. Logout failed.",
             error: err
         })

@@ -5,8 +5,8 @@ const userSchema = new Schema({
     username: {
         type: String,
         required: true,
-        unique: true
         // unique: true
+        unique: true
     },
     email: {
         type: String,
@@ -34,3 +34,6 @@ const userSchema = new Schema({
 })
 
 module.exports = mongoose.model('tb_user', userSchema);
+
+
+

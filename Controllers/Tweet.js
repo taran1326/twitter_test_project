@@ -45,7 +45,7 @@ tweetsRouter.post('/create-tweet',isAuth, async (req, res) => {
 
     try {
         const dbTweet = await Tweet.createTweet();
-
+        // var dbTweet;
         return res.send({
             status: 200,
             message: "Tweet created Successfully.",
@@ -54,7 +54,7 @@ tweetsRouter.post('/create-tweet',isAuth, async (req, res) => {
     }
     catch(err) {
         return res.send({
-            status: 404,
+            status: 404, 
             message: "Database error",
             error: err
         })
