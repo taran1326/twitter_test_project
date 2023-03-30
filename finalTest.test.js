@@ -17,6 +17,8 @@ const { disabled } = require('./index');
 const { default: mongoose } = require('mongoose');
 
 
+require('./validatorCheck.test');
+
 describe('Database test suite' , () => {
     afterAll(async()=> {
         await mongoose.connection.db.dropCollection('tb_users')
@@ -631,9 +633,6 @@ describe('Database test suite' , () => {
             const response = await request(app).post('/auth/logout')
                                                .set('Authorization', token)
                                                .expect(200);
-            // console.log(response.headers);
-            // const fetchedUser = await tb_user.findById({_id:dbUser._id});
-            // expect(fetchedUser.token).toBeNull();
             const numberOfTokens = await tb_tokens.countDocuments();
             expect(numberOfTokens).toBe(0);
         })
