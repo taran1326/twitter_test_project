@@ -7,7 +7,7 @@ const tb_tokens = require('./Schemas/Tokens');
 const bcrypt = require('bcrypt');
 const userSchema = require('./Schemas/User');
 
-
+const {connect , appListen } = require('./db');
 const jwt = require('jsonwebtoken');
 
 const User = require('./Models/User');
@@ -17,13 +17,20 @@ const { disabled } = require('./index');
 const { default: mongoose } = require('mongoose');
 
 
-require('./validatorCheck.test');
+require('./validatorCheck.js');
 
 describe('Database test suite' , () => {
     afterAll(async()=> {
         await mongoose.connection.db.dropCollection('tb_users')
         await mongoose.connection.db.dropCollection('tb_tokens')
         await mongoose.connection.db.dropCollection('tb_tweets')
+
+        // mongoListen.close();
+        await mongoose.disconnect();
+    })
+
+    afterAll(()=>{
+        appListen.close();
     })
 
                                     /*Major functionality tests */

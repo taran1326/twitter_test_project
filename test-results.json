@@ -1,0 +1,149 @@
+{
+  "runtime": 5510,
+  "percentageScore": 100,
+  "count": {
+    "total": 5,
+    "passed": 5
+  },
+  "failedTestCases": [],
+  "suites": [
+    {
+      "suiteName": "Password Check",
+      "passed": true,
+      "testCases": [
+        {
+          "passed": true,
+          "description": "password not present"
+        },
+        {
+          "passed": true,
+          "description": "PASSWORD NOT ALPHANUMERIC"
+        },
+        {
+          "passed": true,
+          "description": "PASSWORD LENGTH LONGER THAN 200 CHARACTERS"
+        },
+        {
+          "passed": true,
+          "description": "PASSWORD LENGTH SHORTER THAN 6 CHARACTERS"
+        }
+      ]
+    },
+    {
+      "suiteName": "Email Check",
+      "passed": true,
+      "testCases": [
+        {
+          "passed": true,
+          "description": "email not present"
+        },
+        {
+          "passed": true,
+          "description": "email has wrong format (missing @ and .)"
+        }
+      ]
+    },
+    {
+      "suiteName": "Username Check",
+      "passed": true,
+      "testCases": [
+        {
+          "passed": true,
+          "description": "username not present"
+        },
+        {
+          "passed": true,
+          "description": "USERNAME IS EQUAL TO EMAIL"
+        },
+        {
+          "passed": true,
+          "description": "USERNAME LENGTH SMALLER THAN 3"
+        },
+        {
+          "passed": true,
+          "description": "USERNAME LENGTH GREATER THAN 50"
+        }
+      ]
+    },
+    {
+      "suiteName": "Name Check",
+      "passed": true,
+      "testCases": [
+        {
+          "passed": true,
+          "description": "name not present"
+        },
+        {
+          "passed": true,
+          "description": "NAME LENGTH LONGER THAN 100 CHARACTERS"
+        }
+      ]
+    },
+    {
+      "suiteName": "Database test suite",
+      "passed": true,
+      "testCases": [
+        {
+          "passed": true,
+          "description": "User X should be able to register if credentials are valid"
+        },
+        {
+          "passed": true,
+          "description": "if user X signs up length of collection should increase"
+        },
+        {
+          "passed": true,
+          "description": "Signed up user should be present in database and password should be hashed properly"
+        },
+        {
+          "passed": true,
+          "description": "should give an error if the user exists (same email)"
+        },
+        {
+          "passed": true,
+          "description": "should give an error if the user exists (same username)"
+        },
+        {
+          "passed": true,
+          "description": "should give an error (500 code) if password missing"
+        },
+        {
+          "passed": true,
+          "description": "should give an error (500 code) if loginID missing"
+        },
+        {
+          "passed": true,
+          "description": "should give an error (404 code) if user has not registered before"
+        },
+        {
+          "passed": true,
+          "description": "should give an error (404 code) if user enters wrong password"
+        },
+        {
+          "passed": true,
+          "description": "User X should be able to sign in with valid credentials"
+        },
+        {
+          "passed": true,
+          "description": "user X should be able to create a new tweet"
+        },
+        {
+          "passed": true,
+          "description": "User X should be able to read his tweets"
+        },
+        {
+          "passed": true,
+          "description": "Second user should be able to read tweets of all"
+        },
+        {
+          "passed": true,
+          "description": "logout test"
+        },
+        {
+          "passed": true,
+          "description": "Should log out from all devices"
+        }
+      ]
+    }
+  ]
+}
