@@ -25,11 +25,12 @@ describe('Database test suite' , () => {
         await mongoose.connection.db.dropCollection('tb_tokens')
         await mongoose.connection.db.dropCollection('tb_tweets')
 
-        // mongoListen.close();
+        //this is to close the mongodb server after the test file has run completely.
         await mongoose.disconnect();
     })
 
     afterAll(()=>{
+        //this is to close the express server after the test file has run completely.
         appListen.close();
     })
 
@@ -41,17 +42,17 @@ describe('Database test suite' , () => {
     let res , res1 ; 
 
     describe('User X Sign Up functionality check' , ()=> {
-        //to clear the users collection in database after runnig the tests
-        // afterAll(async()=> {
-        //     await tb_user.deleteMany({});
-        // })
 
         beforeAll(async()=> {
             await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({});
         })
 
         afterAll(async()=>{
             await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({});
         })
 
 
@@ -133,10 +134,18 @@ describe('Database test suite' , () => {
 
 
         //after running the tests clear all the users and tokens
-        afterAll(async() => {
-            tb_user.deleteMany({});
-            tb_tokens.deleteMany({});
+        beforeAll(async()=> {
+            await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({});
         })
+
+        afterAll(async()=>{
+            await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({});
+        })
+
 
 
         
@@ -246,7 +255,11 @@ describe('Database test suite' , () => {
 
     describe('User X Create Tweeet functionality' , ()=>{
 
-
+        beforeAll(async()=> {
+            await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({});
+        })
         let token , dbUser;
         
         beforeAll(async()=> {
@@ -297,11 +310,14 @@ describe('Database test suite' , () => {
         //     }, 2000); // delay for 2 seconds
         // });
 
-        afterAll(async() => {
+       
+
+        afterAll(async()=>{
             await tb_user.deleteMany({});
-            await tb_tweet.deleteMany({}); 
             await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({});
         })
+
 
 
         test('user X should be able to create a new tweet' , async() =>{
@@ -339,11 +355,18 @@ describe('Database test suite' , () => {
 
     describe('My tweet' , () =>{
 
-        afterAll(async()=> {
-            await tb_tokens.deleteMany({});
+        beforeAll(async()=> {
             await tb_user.deleteMany({});
-            await tb_tweet.deleteMany({}); 
+            await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({});
         })
+
+        afterAll(async()=>{
+            await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({});
+        })
+
 
         let token , dbUser;
         beforeAll(async()=> {
@@ -444,6 +467,19 @@ describe('Database test suite' , () => {
 
     describe('All tweets' , () =>{
 
+        beforeAll(async()=> {
+            await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({});
+        })
+
+        afterAll(async()=>{
+            await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({});
+        })
+
+
         let token , dbUser , dbUser1 , token1;
         beforeAll(async()=> {
             const passwordstring = "testpassword";
@@ -523,11 +559,7 @@ describe('Database test suite' , () => {
         });
 
 
-        afterAll(async() => {
-            await tb_user.deleteMany({});
-            await tb_tokens.deleteMany({});
-            await tb_tweet.deleteMany({}); 
-        })
+        
 
 
         test('Second user should be able to read tweets of all' , async()=>{
@@ -574,18 +606,20 @@ describe('Database test suite' , () => {
 
     describe('Logout' , ()=> {
             
-        beforeAll(async()=>{
-            await tb_tokens.deleteMany({}); 
+        beforeAll(async()=> {
             await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({});
+        })
+
+        afterAll(async()=>{
+            await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
             await tb_tweet.deleteMany({});
         })
 
 
-        afterAll(async() => {
-            await tb_user.deleteMany({});
-            await tb_tokens.deleteMany({});
 
-        })
         let token , dbUser;
         beforeAll(async()=> {
             const passwordstring = "John1234";
@@ -640,8 +674,7 @@ describe('Database test suite' , () => {
             const response = await request(app).post('/auth/logout')
                                                .set('Authorization', token)
                                                .expect(200);
-            const numberOfTokens = await tb_tokens.countDocuments();
-            expect(numberOfTokens).toBe(0);
+            await expect(tb_tokens.countDocuments()).resolves.toBe(0);
         })
 
     })
@@ -649,12 +682,18 @@ describe('Database test suite' , () => {
 
     describe('Logout from all devices' , ()=>{
 
-
-        afterAll(async() => {
+        beforeAll(async()=> {
             await tb_user.deleteMany({});
             await tb_tokens.deleteMany({});
-
+            await tb_tweet.deleteMany({});
         })
+
+        afterAll(async()=>{
+            await tb_user.deleteMany({});
+            await tb_tokens.deleteMany({});
+            await tb_tweet.deleteMany({});
+        })
+
 
         // beforeAll(async()=>{
         //     await tb_tokens.deleteMany({}); 
